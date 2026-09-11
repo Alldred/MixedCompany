@@ -1,0 +1,55 @@
+{
+  "fonts": {
+    "MixedCompanyWild": {
+      "characters": 179,
+      "unique_advance_widths": 136,
+      "fixed_pitch": false,
+      "every_glyph_rasterized_at_px": [
+        48,
+        128
+      ],
+      "four_character_widths_at_100px": {
+        "iiii": 112.0,
+        "WWWW": 324.0,
+        "....": 80.0,
+        "    ": 124.0,
+        "0000": 236.0,
+        "AVTo": 257.921875,
+        "£€$%": 265.0,
+        "Àéñü": 259.0
+      },
+      "bounds_y": [
+        -222,
+        940
+      ],
+      "checksum_valid": true
+    },
+    "MixedCompanyWildMono": {
+      "characters": 179,
+      "unique_advance_widths": 1,
+      "fixed_pitch": true,
+      "every_glyph_rasterized_at_px": [
+        48,
+        128
+      ],
+      "four_character_widths_at_100px": {
+        "iiii": 256.0,
+        "WWWW": 256.0,
+        "....": 256.0,
+        "    ": 256.0,
+        "0000": 256.0,
+        "AVTo": 256.0,
+        "£€$%": 256.0,
+        "Àéñü": 256.0
+      },
+      "bounds_y": [
+        -222,
+        940
+      ],
+      "checksum_valid": true
+    }
+  },
+  "independent_accent_bodies": 54,
+  "maximum_normalized_accent_parent_body_overlap": 0.7387,
+  "eyes_character": "o"
+}

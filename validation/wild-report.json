@@ -1,0 +1,460 @@
+{
+  "version": "3.000",
+  "families": [
+    "Mixed Company Wild",
+    "Mixed Company Wild Mono"
+  ],
+  "encoded_characters": 179,
+  "independent_accent_bodies": 54,
+  "styles": {
+    "A": "Gothic blackletter",
+    "B": "Inflated vinyl",
+    "C": "beaked Roman",
+    "D": "segmented octagon",
+    "E": "woodcut stripes",
+    "F": "double-rule blueprint",
+    "G": "Graffiti marker",
+    "H": "Knuckled bones",
+    "I": "bifurcated Tuscan",
+    "J": "tapered brush",
+    "K": "angular stencil",
+    "L": "dimensional shadow",
+    "M": "Chunky arcade pixels",
+    "N": "folded ribbon",
+    "O": "high-contrast oval",
+    "P": "pinstripe stem",
+    "Q": "comet tail",
+    "R": "Punk thorns",
+    "S": "dotted marquee",
+    "T": "western forks",
+    "U": "reverse-contrast bowl",
+    "V": "chisel contrast",
+    "W": "Wrought-iron scrolls",
+    "X": "woven strokes",
+    "Y": "spindle terminals",
+    "Z": "racing rules",
+    "a": "double-storey book",
+    "b": "Brickwork",
+    "c": "diamond terminals",
+    "d": "squared italic",
+    "e": "Loose ink handwriting",
+    "f": "long calligraphic swash",
+    "g": "double-storey geometric",
+    "h": "Woven basket",
+    "i": "Circuit column",
+    "j": "hairline hook / triangular dot",
+    "k": "tubular stem / solid branches",
+    "l": "looped script",
+    "m": "Roman aqueduct",
+    "n": "cursive entry",
+    "o": "Googly-eyed creature",
+    "p": "engraved descender",
+    "q": "Fractured stone",
+    "r": "curled serif shoulder",
+    "s": "Repeated pencil strokes",
+    "t": "split crossbar",
+    "u": "Dripping goo",
+    "v": "notched wedge",
+    "w": "connected double cup",
+    "x": "studded crossing",
+    "y": "looped descender",
+    "z": "reverse-contrast zigzag",
+    "0": "technical slashed zero",
+    "1": "pennant and wedge",
+    "2": "Rough chalk",
+    "3": "Pleated paper",
+    "4": "open hairline",
+    "5": "Knitted wool",
+    "6": "open spiral",
+    "7": "swashed brush",
+    "8": "stacked diamonds",
+    "9": "Fingerprint contours",
+    "!": "tapered stem / square stop",
+    "\"": "parallel square quotes",
+    "#": "Bamboo lattice",
+    "$": "Engraved currency",
+    "%": "Electronic percentage",
+    "&": "Climbing vine",
+    "'": "diamond apostrophe",
+    "(": "fine parenthesis",
+    ")": "contrast parenthesis",
+    "*": "Snow crystal",
+    "+": "Building-block plus",
+    ",": "teardrop comma",
+    "-": "capsule hyphen",
+    ".": "diamond full stop",
+    "/": "tapered slash",
+    ":": "square colon",
+    ";": "ring and hook semicolon",
+    "<": "square left angle",
+    "=": "broad equals",
+    ">": "round right angle",
+    "?": "Torn-paper question",
+    "@": "Scribbled spiral",
+    "[": "open left bracket",
+    "\\": "solid backslash",
+    "]": "serif right bracket",
+    "^": "contrasted caret",
+    "_": "inlaid underscore",
+    "`": "cut acute-backtick",
+    "{": "Feather brace",
+    "|": "hollow vertical pipe",
+    "}": "Coral brace",
+    "~": "Coiled spring",
+    "£": "Chrome pound",
+    "€": "Euro keys",
+    "¥": "Serrated yen",
+    "¢": "reverse-contrast cent",
+    "×": "woven multiplication",
+    "÷": "rounded division",
+    "±": "solid plus-minus",
+    "−": "hairline minus",
+    "°": "contrasted degree",
+    "•": "solid bullet",
+    "…": "square ellipsis",
+    "–": "square en dash",
+    "—": "round em dash",
+    "‘": "angular opening quote",
+    "’": "soft closing quote",
+    "“": "fine opening double quote",
+    "”": "heavy closing double quote",
+    "≤": "soft less-or-equal",
+    "≥": "light greater-or-equal",
+    "≠": "contrasted unequal",
+    "←": "Lightning arrow",
+    "→": "Pipework arrow",
+    "↑": "Crowned arrow",
+    "↓": "Falling icicle",
+    "©": "light copyright",
+    "®": "contrasted registration",
+    "™": "outlined trademark",
+    "¡": "square inverted exclamation",
+    "¿": "rounded inverted question",
+    "À": "Mosaic A",
+    "Á": "Brush A",
+    "Â": "Ice A",
+    "Ã": "Ripple A",
+    "Ä": "Plumbed A",
+    "Å": "Chain-link A",
+    "Ç": "Vine C",
+    "È": "Toy-brick E",
+    "É": "LED-matrix E",
+    "Ê": "Wheat E",
+    "Ë": "Wire-cage E",
+    "Ì": "Sword I",
+    "Í": "Barcode I",
+    "Î": "Scrolled I",
+    "Ï": "Cross-knit I",
+    "Ñ": "Postage-stamp N",
+    "Ò": "Honeycomb O",
+    "Ó": "Sunburst O",
+    "Ô": "Medieval uncial O",
+    "Õ": "Scribbled O",
+    "Ö": "Orbital O",
+    "Ù": "Piano-key U",
+    "Ú": "Liquid-chrome U",
+    "Û": "Circuit-board U",
+    "Ü": "Zipped U",
+    "Ý": "Feather Y",
+    "Ÿ": "Crowned Y",
+    "à": "Torn-paper a",
+    "á": "Spiral a",
+    "â": "Lacework a",
+    "ã": "Braided a",
+    "ä": "Half-filled a",
+    "å": "Wax-seal a",
+    "ç": "Coral c",
+    "è": "Candy-stripe e",
+    "é": "Button-thread e",
+    "ê": "Flaming e",
+    "ë": "Pebble e",
+    "ì": "Wax-candle i",
+    "í": "Beaded i",
+    "î": "Spring i",
+    "ï": "Ladder i",
+    "ñ": "Jigsaw n",
+    "ò": "Tyre-tread o",
+    "ó": "Contour-map o",
+    "ô": "Flower o",
+    "õ": "Cracked-stone o",
+    "ö": "Pixel-tile o",
+    "ù": "Stitched-leather u",
+    "ú": "Bamboo u",
+    "û": "Sawblade u",
+    "ü": "Bent-wire u",
+    "ý": "Lightning y",
+    "ÿ": "Crystalline y"
+  },
+  "accent_body_comparisons": {
+    "À": {
+      "parent": "A",
+      "body_overlap": 0.3941,
+      "style": "Mosaic A"
+    },
+    "Á": {
+      "parent": "A",
+      "body_overlap": 0.3617,
+      "style": "Brush A"
+    },
+    "Â": {
+      "parent": "A",
+      "body_overlap": 0.3261,
+      "style": "Ice A"
+    },
+    "Ã": {
+      "parent": "A",
+      "body_overlap": 0.2868,
+      "style": "Ripple A"
+    },
+    "Ä": {
+      "parent": "A",
+      "body_overlap": 0.2841,
+      "style": "Plumbed A"
+    },
+    "Å": {
+      "parent": "A",
+      "body_overlap": 0.2634,
+      "style": "Chain-link A"
+    },
+    "Ç": {
+      "parent": "C",
+      "body_overlap": 0.5665,
+      "style": "Vine C"
+    },
+    "È": {
+      "parent": "E",
+      "body_overlap": 0.7021,
+      "style": "Toy-brick E"
+    },
+    "É": {
+      "parent": "E",
+      "body_overlap": 0.4473,
+      "style": "LED-matrix E"
+    },
+    "Ê": {
+      "parent": "E",
+      "body_overlap": 0.3151,
+      "style": "Wheat E"
+    },
+    "Ë": {
+      "parent": "E",
+      "body_overlap": 0.4952,
+      "style": "Wire-cage E"
+    },
+    "Ì": {
+      "parent": "I",
+      "body_overlap": 0.2905,
+      "style": "Sword I"
+    },
+    "Í": {
+      "parent": "I",
+      "body_overlap": 0.5448,
+      "style": "Barcode I"
+    },
+    "Î": {
+      "parent": "I",
+      "body_overlap": 0.3468,
+      "style": "Scrolled I"
+    },
+    "Ï": {
+      "parent": "I",
+      "body_overlap": 0.5419,
+      "style": "Cross-knit I"
+    },
+    "Ñ": {
+      "parent": "N",
+      "body_overlap": 0.1313,
+      "style": "Postage-stamp N"
+    },
+    "Ò": {
+      "parent": "O",
+      "body_overlap": 0.4257,
+      "style": "Honeycomb O"
+    },
+    "Ó": {
+      "parent": "O",
+      "body_overlap": 0.5734,
+      "style": "Sunburst O"
+    },
+    "Ô": {
+      "parent": "O",
+      "body_overlap": 0.5832,
+      "style": "Medieval uncial O"
+    },
+    "Õ": {
+      "parent": "O",
+      "body_overlap": 0.3279,
+      "style": "Scribbled O"
+    },
+    "Ö": {
+      "parent": "O",
+      "body_overlap": 0.4862,
+      "style": "Orbital O"
+    },
+    "Ù": {
+      "parent": "U",
+      "body_overlap": 0.577,
+      "style": "Piano-key U"
+    },
+    "Ú": {
+      "parent": "U",
+      "body_overlap": 0.5776,
+      "style": "Liquid-chrome U"
+    },
+    "Û": {
+      "parent": "U",
+      "body_overlap": 0.4607,
+      "style": "Circuit-board U"
+    },
+    "Ü": {
+      "parent": "U",
+      "body_overlap": 0.3582,
+      "style": "Zipped U"
+    },
+    "Ý": {
+      "parent": "Y",
+      "body_overlap": 0.577,
+      "style": "Feather Y"
+    },
+    "Ÿ": {
+      "parent": "Y",
+      "body_overlap": 0.2902,
+      "style": "Crowned Y"
+    },
+    "à": {
+      "parent": "a",
+      "body_overlap": 0.4429,
+      "style": "Torn-paper a"
+    },
+    "á": {
+      "parent": "a",
+      "body_overlap": 0.4471,
+      "style": "Spiral a"
+    },
+    "â": {
+      "parent": "a",
+      "body_overlap": 0.279,
+      "style": "Lacework a"
+    },
+    "ã": {
+      "parent": "a",
+      "body_overlap": 0.4928,
+      "style": "Braided a"
+    },
+    "ä": {
+      "parent": "a",
+      "body_overlap": 0.213,
+      "style": "Half-filled a"
+    },
+    "å": {
+      "parent": "a",
+      "body_overlap": 0.1782,
+      "style": "Wax-seal a"
+    },
+    "ç": {
+      "parent": "c",
+      "body_overlap": 0.2297,
+      "style": "Coral c"
+    },
+    "è": {
+      "parent": "e",
+      "body_overlap": 0.4685,
+      "style": "Candy-stripe e"
+    },
+    "é": {
+      "parent": "e",
+      "body_overlap": 0.6186,
+      "style": "Button-thread e"
+    },
+    "ê": {
+      "parent": "e",
+      "body_overlap": 0.58,
+      "style": "Flaming e"
+    },
+    "ë": {
+      "parent": "e",
+      "body_overlap": 0.7387,
+      "style": "Pebble e"
+    },
+    "ì": {
+      "parent": "i",
+      "body_overlap": 0.2624,
+      "style": "Wax-candle i"
+    },
+    "í": {
+      "parent": "i",
+      "body_overlap": 0.2722,
+      "style": "Beaded i"
+    },
+    "î": {
+      "parent": "i",
+      "body_overlap": 0.1693,
+      "style": "Spring i"
+    },
+    "ï": {
+      "parent": "i",
+      "body_overlap": 0.141,
+      "style": "Ladder i"
+    },
+    "ñ": {
+      "parent": "n",
+      "body_overlap": 0.621,
+      "style": "Jigsaw n"
+    },
+    "ò": {
+      "parent": "o",
+      "body_overlap": 0.5557,
+      "style": "Tyre-tread o"
+    },
+    "ó": {
+      "parent": "o",
+      "body_overlap": 0.2955,
+      "style": "Contour-map o"
+    },
+    "ô": {
+      "parent": "o",
+      "body_overlap": 0.5386,
+      "style": "Flower o"
+    },
+    "õ": {
+      "parent": "o",
+      "body_overlap": 0.5388,
+      "style": "Cracked-stone o"
+    },
+    "ö": {
+      "parent": "o",
+      "body_overlap": 0.4039,
+      "style": "Pixel-tile o"
+    },
+    "ù": {
+      "parent": "u",
+      "body_overlap": 0.4896,
+      "style": "Stitched-leather u"
+    },
+    "ú": {
+      "parent": "u",
+      "body_overlap": 0.372,
+      "style": "Bamboo u"
+    },
+    "û": {
+      "parent": "u",
+      "body_overlap": 0.2786,
+      "style": "Sawblade u"
+    },
+    "ü": {
+      "parent": "u",
+      "body_overlap": 0.1118,
+      "style": "Bent-wire u"
+    },
+    "ý": {
+      "parent": "y",
+      "body_overlap": 0.6331,
+      "style": "Lightning y"
+    },
+    "ÿ": {
+      "parent": "y",
+      "body_overlap": 0.425,
+      "style": "Crystalline y"
+    }
+  }
+}
