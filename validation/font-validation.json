@@ -1,6 +1,6 @@
 {
   "fonts": {
-    "MixedCompanyWild": {
+    "MixedCompany": {
       "characters": 179,
       "unique_advance_widths": 136,
       "fixed_pitch": false,
@@ -24,7 +24,7 @@
       ],
       "checksum_valid": true
     },
-    "MixedCompanyWildMono": {
+    "MixedCompanyMono": {
       "characters": 179,
       "unique_advance_widths": 1,
       "fixed_pitch": true,

@@ -1,4 +1,4 @@
-"""Mixed Company Wild Mono 3.0: individually styled glyphs and accented bodies.
+"""MixedCompany Mono 3.0: individually styled glyphs and accented bodies.
 Requires Python 3, fonttools, shapely, brotli, Pillow. No source fonts are used.
 """
 from pathlib import Path
@@ -959,7 +959,7 @@ for c in list(G)+list(ACCENT):
     body,mode,label=normalize_body(c);BODIES[c]=body;LABELS[c]=label
 assert len(ACCENT)==54
 
-FAMILIES=[('Mixed Company Wild','MixedCompanyWild',False),('Mixed Company Wild Mono','MixedCompanyWildMono',True)]
+FAMILIES=[('MixedCompany','MixedCompany',False),('MixedCompany Mono','MixedCompanyMono',True)]
 BUILT={}
 for family,stem,mono in FAMILIES:
     out=ROOT/'outputs'/stem;out.mkdir(exist_ok=True)
@@ -972,14 +972,14 @@ for family,stem,mono in FAMILIES:
         shapes[c]=g;glyphs[name]=as_glyph(g);metrics[name]=(adv,round(g.bounds[0]));cmap[ord(c)]=name
     fb=FontBuilder(1000,isTTF=True);fb.setupGlyphOrder(list(glyphs));fb.setupCharacterMap(cmap);fb.setupGlyf(glyphs)
     fb.setupHorizontalMetrics(metrics);fb.setupHorizontalHeader(ascent=1040,descent=-380,lineGap=0)
-    fb.setupNameTable({'familyName':family,'styleName':'Regular','uniqueFontIdentifier':family+' 3.000 Original 2026',
-    'fullName':family+' Regular','psName':stem+'-Regular','version':'Version 3.000',
+    fb.setupNameTable({'familyName':family,'styleName':'Regular','uniqueFontIdentifier':family+' 3.001 Original 2026',
+    'fullName':family+' Regular','psName':stem+'-Regular','version':'Version 3.001',
     'copyright':'Original vector design created for Stuart Alldred, 2026.',
     'description':'Wild display lettering with separately styled accented character bodies. '+('Every character has a 640-unit advance.' if mono else 'Proportional widths and optical kerning.')})
     fb.setupOS2(sTypoAscender=1040,sTypoDescender=-380,sTypoLineGap=0,usWinAscent=1040,usWinDescent=380,
                 sxHeight=520,sCapHeight=710,usWeightClass=400,usWidthClass=5,fsType=0,fsSelection=0x40)
     fb.font['OS/2'].panose.bFamilyType=2;fb.font['OS/2'].panose.bProportion=9 if mono else 0
-    fb.setupPost(isFixedPitch=1 if mono else 0);fb.setupMaxp();fb.font['head'].fontRevision=3
+    fb.setupPost(isFixedPitch=1 if mono else 0);fb.setupMaxp();fb.font['head'].fontRevision=3.001
     if not mono:
         from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
         pairs={p:v for p,v in {'AV':-30,'AW':-25,'AY':-35,'AT':-23,'VA':-30,'WA':-22,'YA':-30,'TA':-22,'To':-25,'Ta':-22,'Te':-20,'Yo':-28,'Ya':-25,'Vo':-24,'Va':-22,'Wo':-18,'Wa':-18,'LT':-20,'LY':-25,'FA':-18,'PA':-24}.items()}
@@ -1001,9 +1001,9 @@ for stem,info in BUILT.items():
     im=Image.new('RGB',(1800,2290),PAPER);d=ImageDraw.Draw(im)
     def text(x,y,s,size=28,display=False,color=INK,bold=False):d.text((x,y),s,font=df(stem,size) if display else uifont(size,bold),fill=color,anchor='lt')
     def rule(y):d.line((80,y,1720,y),fill=LINE,width=2)
-    text(80,62,'MIXED COMPANY / WILD',25,bold=True);text(1330,62,'MONO / 03' if info['mono'] else 'PROPORTIONAL / 03',24)
+    text(80,62,'MIXEDCOMPANY',25,bold=True);text(1330,62,'MONO / 03' if info['mono'] else 'PROPORTIONAL / 03',24)
     rule(112)
-    text(80,166,'Wild Company',179,True)
+    text(80,166,'MixedCompany',179,True)
     text(80,378,'Gothic. Goo. Chalk. Pixels. And googly eyes.',33,bold=True)
     text(80,440,'179 characters · 54 independently styled accented letters',26,color=MUTED)
     rule(503)
@@ -1028,7 +1028,7 @@ for stem,info in BUILT.items():
     im.save(info['out']/(stem+'-Preview.png'))
 
 # Both compact family comparisons and the complete labelled atlas.
-STEM='MixedCompanyWildMono';info=BUILT[STEM]
+STEM='MixedCompanyMono';info=BUILT[STEM]
 groups=['AÀÁÂÃÄÅ','aàáâãäå','CÇ cç','EÈÉÊË','eèéêë','IÌÍÎÏ','iìíîï','NÑ nñ','OÒÓÔÕÖ','oòóôõö','UÙÚÛÜ','uùúûü','YÝŸ yýÿ']
 im=Image.new('RGB',(1800,2780),PAPER);d=ImageDraw.Draw(im)
 d.text((80,50),'EVERY ACCENT HAS AN ALTER EGO',font=uifont(34,True),fill=INK)
@@ -1044,12 +1044,12 @@ for row,s in enumerate(groups):
         while d.textlength(label,font=uifont(size))>207:size-=1
         d.text((x,yy+146),label,font=uifont(size),fill=RED if c in ACCENT else MUTED)
     d.line((80,yy+177,1720,yy+177),fill=LINE,width=1)
-im.save(ROOT/'outputs'/'MixedCompanyWild-Accent-Families.png')
+im.save(ROOT/'outputs'/'MixedCompany-Accent-Families.png')
 
 chars=[chr(cp) for cp in sorted(info['cmap']) if cp not in (32,160)]
 cols=10;cw=169;ch=189
 atlas=Image.new('RGB',(cols*cw+100,math.ceil(len(chars)/cols)*ch+180),PAPER);d=ImageDraw.Draw(atlas)
-d.text((50,36),'WILD / COMPLETE CHARACTER & STYLE ATLAS',font=uifont(30,True),fill=INK)
+d.text((50,36),'MIXEDCOMPANY / COMPLETE CHARACTER & STYLE ATLAS',font=uifont(30,True),fill=INK)
 for i,c in enumerate(chars):
     x=50+(i%cols)*cw;y=119+(i//cols)*ch
     d.rectangle((x,y,x+cw,y+ch),outline=LINE)
@@ -1058,7 +1058,7 @@ for i,c in enumerate(chars):
     label=LABELS[c];size=13
     while d.textlength(label,font=uifont(size))>cw-15 and size>9:size-=1
     d.text((x+8,y+159),label,font=uifont(size),fill=RED)
-atlas.save(ROOT/'outputs'/'MixedCompanyWild-Character-Atlas.png')
+atlas.save(ROOT/'outputs'/'MixedCompany-Character-Atlas.png')
 
 # The same words in both actual fonts, including narrow-letter and spacing cases.
 compare=Image.new('RGB',(1800,1330),PAPER);d=ImageDraw.Draw(compare)
@@ -1069,21 +1069,21 @@ for j,(stem,info) in enumerate(BUILT.items()):
     for k,s in enumerate(['A little weird?','Voilà! Déjà vu.','iiii  WWWW  1234']):
         d.text((80,y+72+k*150),s,font=df(stem,124),fill=INK,anchor='lt')
     d.line((80,y+535,1720,y+535),fill=LINE,width=2)
-compare.save(ROOT/'outputs'/'MixedCompanyWild-Spacing-Comparison.png')
+compare.save(ROOT/'outputs'/'MixedCompany-Spacing-Comparison.png')
 
 encoded={stem:base64.b64encode((info['out']/(stem+'-Regular.woff2')).read_bytes()).decode() for stem,info in BUILT.items()}
 cards=''.join('<div class="glyph"><span>'+html.escape(c)+'</span><small>'+html.escape(LABELS[c])+'</small></div>' for c in chars)
-page='''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mixed Company Wild / try both fonts</title><style>
-@font-face{font-family:Wild;src:url(data:font/woff2;base64,PROPFONT) format('woff2')}@font-face{font-family:WildMono;src:url(data:font/woff2;base64,MONOFONT) format('woff2')}*{box-sizing:border-box}body{margin:0;background:#f5f0e4;color:#252621;font:16px system-ui,sans-serif}main{max-width:1240px;padding:34px 28px;margin:auto}header{display:flex;justify-content:space-between;gap:24px;border-bottom:1px solid #c9c1b2;padding-bottom:24px;font-size:13px;letter-spacing:.07em}h1{font:clamp(43px,6.2vw,84px)/1.5 Wild;margin:35px 0 14px}p{line-height:1.6;max-width:820px}nav{display:flex;flex-wrap:wrap;gap:22px;align-items:center;border-top:1px solid #c9c1b2;padding:23px 0;margin-top:30px}label{display:inline-flex;gap:10px;align-items:center;font-size:14px}select{padding:9px 12px;border:1px solid #b8b2a6;background:transparent;border-radius:4px;font:inherit}input{accent-color:#d33b31}textarea{font:74px/1.52 Wild;width:100%;height:410px;background:transparent;color:inherit;border:1px solid #c9c1b2;resize:vertical;padding:20px;outline-color:#d33b31;font-synthesis:none}.mono{font-family:WildMono;font-kerning:none;font-variant-ligatures:none}.tip{font-size:13px;color:#77766b}.status{min-height:24px;color:#b23c2f;font-size:14px}h2{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:#d33b31;margin:43px 0 22px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));border-left:1px solid #c9c1b2;border-top:1px solid #c9c1b2}.glyph{min-height:153px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid #c9c1b2;border-bottom:1px solid #c9c1b2;text-align:center;padding:5px}.glyph span{font:74px/1.5 Wild}.grid.mono .glyph span{font-family:WildMono}.glyph small{font-size:10px;color:#747466;line-height:1.4}footer{border-top:1px solid #c9c1b2;padding-top:20px;margin-top:40px;font-size:13px;color:#747466}</style>
-<main><header><strong>MIXED COMPANY / WILD</strong><span>THIRD EDITION / TWO FONTS</span></header><h1>Wild Company</h1><p>Gothic, goo, chalk, pixels, handwriting, vines, bones and more. Every accented character has an independently styled body. Switch between proportional spacing and a strict one-character-per-column grid.</p><nav><label>Font <select id="face"><option value="Wild">Proportional</option><option value="WildMono">Monospaced</option></select></label><label>Size <input id="size" type="range" min="28" max="150" value="74"><output id="sizeout">74 px</output></label><label>Ink <input id="ink" type="color" value="#252621"></label></nav><textarea id="tester" aria-label="Try the Wild fonts" spellcheck="false">A little weird? Voilà!
+page='''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MixedCompany / try both fonts</title><style>
+@font-face{font-family:MixedCompany;src:url(data:font/woff2;base64,PROPFONT) format('woff2')}@font-face{font-family:MixedCompanyMono;src:url(data:font/woff2;base64,MONOFONT) format('woff2')}*{box-sizing:border-box}body{margin:0;background:#f5f0e4;color:#252621;font:16px system-ui,sans-serif}main{max-width:1240px;padding:34px 28px;margin:auto}header{display:flex;justify-content:space-between;gap:24px;border-bottom:1px solid #c9c1b2;padding-bottom:24px;font-size:13px;letter-spacing:.07em}h1{font:clamp(43px,6.2vw,84px)/1.5 MixedCompany;margin:35px 0 14px}p{line-height:1.6;max-width:820px}nav{display:flex;flex-wrap:wrap;gap:22px;align-items:center;border-top:1px solid #c9c1b2;padding:23px 0;margin-top:30px}label{display:inline-flex;gap:10px;align-items:center;font-size:14px}select{padding:9px 12px;border:1px solid #b8b2a6;background:transparent;border-radius:4px;font:inherit}input{accent-color:#d33b31}textarea{font:74px/1.52 MixedCompany;width:100%;height:410px;background:transparent;color:inherit;border:1px solid #c9c1b2;resize:vertical;padding:20px;outline-color:#d33b31;font-synthesis:none}.mono{font-family:MixedCompanyMono;font-kerning:none;font-variant-ligatures:none}.tip{font-size:13px;color:#77766b}.status{min-height:24px;color:#b23c2f;font-size:14px}h2{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:#d33b31;margin:43px 0 22px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));border-left:1px solid #c9c1b2;border-top:1px solid #c9c1b2}.glyph{min-height:153px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid #c9c1b2;border-bottom:1px solid #c9c1b2;text-align:center;padding:5px}.glyph span{font:74px/1.5 MixedCompany}.grid.mono .glyph span{font-family:MixedCompanyMono}.glyph small{font-size:10px;color:#747466;line-height:1.4}footer{border-top:1px solid #c9c1b2;padding-top:20px;margin-top:40px;font-size:13px;color:#747466}</style>
+<main><header><strong>MIXEDCOMPANY</strong><span>STANDARD + MONO</span></header><h1>MixedCompany</h1><p>Gothic, goo, chalk, pixels, handwriting, vines, bones and more. Every accented character has an independently styled body. Switch between proportional spacing and a strict one-character-per-column grid.</p><nav><label>Font <select id="face"><option value="MixedCompany">Proportional</option><option value="MixedCompanyMono">Monospaced</option></select></label><label>Size <input id="size" type="range" min="28" max="150" value="74"><output id="sizeout">74 px</output></label><label>Ink <input id="ink" type="color" value="#252621"></label></nav><textarea id="tester" aria-label="Try the MixedCompany fonts" spellcheck="false">A little weird? Voilà!
 A À Á Â Ã Ä Å
-u ù ú û ü  2</textarea><p class="tip">Both fonts are embedded for offline use. The fine textures work best at larger sizes. Repeated characters retain their assigned designs.</p><p id="status" class="status" aria-live="polite"></p><h2>179 characters / 54 independently styled accented bodies</h2><section class="grid" id="grid">CARDS</section><footer>Install MixedCompanyWild-Regular.ttf or MixedCompanyWildMono-Regular.ttf. Use precomposed accented letters; unsupported characters may display in a fallback font. Selected Latin coverage.</footer></main><script>
+u ù ú û ü  2</textarea><p class="tip">Both fonts are embedded for offline use. The fine textures work best at larger sizes. Repeated characters retain their assigned designs.</p><p id="status" class="status" aria-live="polite"></p><h2>179 characters / 54 independently styled accented bodies</h2><section class="grid" id="grid">CARDS</section><footer>Install MixedCompany-Regular.ttf or MixedCompanyMono-Regular.ttf. Use precomposed accented letters; unsupported characters may display in a fallback font. Selected Latin coverage.</footer></main><script>
 const tester=document.querySelector('#tester'),face=document.querySelector('#face'),size=document.querySelector('#size'),ink=document.querySelector('#ink'),grid=document.querySelector('#grid');
-face.onchange=()=>{tester.style.fontFamily=face.value;tester.classList.toggle('mono',face.value==='WildMono');grid.classList.toggle('mono',face.value==='WildMono')};size.oninput=()=>{tester.style.fontSize=size.value+'px';document.querySelector('#sizeout').value=size.value+' px'};ink.oninput=()=>tester.style.color=ink.value;
+face.onchange=()=>{tester.style.fontFamily=face.value;tester.classList.toggle('mono',face.value==='MixedCompanyMono');grid.classList.toggle('mono',face.value==='MixedCompanyMono')};size.oninput=()=>{tester.style.fontSize=size.value+'px';document.querySelector('#sizeout').value=size.value+' px'};ink.oninput=()=>tester.style.color=ink.value;
 const supported=new Set(CODEPOINTS);tester.oninput=()=>{const missing=[...new Set([...tester.value].filter(c=>!supported.has(c.codePointAt(0))&&!/\\s/.test(c)))];document.querySelector('#status').textContent=missing.length?'Outside this character set: '+missing.join(' '):''};tester.oninput();
-</script></html>'''.replace('PROPFONT',encoded['MixedCompanyWild']).replace('MONOFONT',encoded['MixedCompanyWildMono']).replace('CARDS',cards).replace('CODEPOINTS',json.dumps(sorted(info['cmap'])))
-(ROOT/'outputs'/'MixedCompanyWild-Try-It.html').write_text(page)
-(ROOT/'work'/'wild-tester.js').write_text(page.split('<script>')[1].split('</script>')[0])
+</script></html>'''.replace('PROPFONT',encoded['MixedCompany']).replace('MONOFONT',encoded['MixedCompanyMono']).replace('CARDS',cards).replace('CODEPOINTS',json.dumps(sorted(info['cmap'])))
+(ROOT/'outputs'/'MixedCompany-Try-It.html').write_text(page)
+(ROOT/'work'/'font-tester.js').write_text(page.split('<script>')[1].split('</script>')[0])
 
 # The comparison excludes accents, checking that the body really changed.
 body_differences={}
@@ -1095,6 +1095,6 @@ for c in ACCENT:
     a,b=unit(BODIES[c]),unit(BODIES[parent]);overlap=a.intersection(b).area/a.union(b).area
     body_differences[c]={'parent':parent,'body_overlap':round(overlap,4),'style':LABELS[c]}
     assert overlap<.80,(c,parent,'accent body too close to parent',overlap)
-report={'version':'3.000','families':[f[0] for f in FAMILIES],'encoded_characters':len(info['cmap']),'independent_accent_bodies':len(ACCENT),'styles':LABELS,'accent_body_comparisons':body_differences}
-(ROOT/'work'/'wild-report.json').write_text(json.dumps(report,indent=2,ensure_ascii=False))
+report={'version':'3.001','families':[f[0] for f in FAMILIES],'encoded_characters':len(info['cmap']),'independent_accent_bodies':len(ACCENT),'styles':LABELS,'accent_body_comparisons':body_differences}
+(ROOT/'work'/'font-report.json').write_text(json.dumps(report,indent=2,ensure_ascii=False))
 print(json.dumps({'families':report['families'],'characters':report['encoded_characters'],'independent_accent_bodies':len(ACCENT),'maximum_accent_parent_body_overlap':max(d['body_overlap'] for d in body_differences.values())},indent=2))
