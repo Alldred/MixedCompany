@@ -1,5 +1,7 @@
 # MixedCompany
 
+For Will ❤️
+
 A display typeface. Every letter is its own drawing, including the accented ones.
 
 Two fonts: **MixedCompany** (proportional) and **MixedCompany Mono** (fixed width).
@@ -38,10 +40,8 @@ Also in the font: ≤ ≥ ≠ ← → ↔ ⇐ ⇒ ⇔ ≡ ≢ ≈
 ## Source
 
 ```sh
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python src/build_fonts.py
+uv sync
+uv run python src/build_fonts.py
 ```
 
-Python 3.12. Drawings are in `src/build_fonts.py`.
+Python 3.12+. Drawings are in `src/build_fonts.py`.

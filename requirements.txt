@@ -1,4 +1,0 @@
-fonttools==4.65.0
-shapely==2.1.2
-brotli==1.2.0
-Pillow==12.3.0
