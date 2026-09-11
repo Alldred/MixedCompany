@@ -14,7 +14,7 @@ Both use the latest wild drawings: gothic, pixels, handwriting, chalk, goo, bone
 | MixedCompany | [TTF](outputs/MixedCompany/MixedCompany-Regular.ttf) | [WOFF2](outputs/MixedCompany/MixedCompany-Regular.woff2) |
 | MixedCompany Mono | [TTF](outputs/MixedCompanyMono/MixedCompanyMono-Regular.ttf) | [WOFF2](outputs/MixedCompanyMono/MixedCompanyMono-Regular.woff2) |
 
-[Complete package](outputs/MixedCompany-Package.zip) · [Offline tester](outputs/MixedCompany-Try-It.html) · [Spacing comparison](outputs/MixedCompany-Spacing-Comparison.png) · [Character atlas](outputs/MixedCompany-Character-Atlas.png) · [Accent families](outputs/MixedCompany-Accent-Families.png)
+[Try both fonts](https://alldred.github.io/MixedCompany/) · [Complete package](outputs/MixedCompany-Package.zip) · [Offline tester](outputs/MixedCompany-Try-It.html) · [Spacing comparison](outputs/MixedCompany-Spacing-Comparison.png) · [Character atlas](outputs/MixedCompany-Character-Atlas.png) · [Accent families](outputs/MixedCompany-Accent-Families.png)
 
 ![MixedCompany specimen](outputs/MixedCompany/MixedCompany-Preview.png)
 
@@ -52,7 +52,7 @@ python src/preview_ligatures.py
 python src/preview_pairs.py
 ```
 
-The builder regenerates both fonts, previews and the tester in outputs/. Reports and extracted tester JavaScript go in work/. The release ZIP and validation/ reports are saved snapshots.
+The builder regenerates both fonts, previews and the tester in outputs/. Pushing to main publishes the tester to [GitHub Pages](https://alldred.github.io/MixedCompany/). Reports and extracted tester JavaScript go in work/. The release ZIP and validation/ reports are saved snapshots.
 
 The original vector drawings live in src/build_fonts.py. No existing font outlines are used. Preview annotations use macOS Arial; adjust the ui and uib paths for other platforms.
 
