@@ -959,6 +959,30 @@ for c in list(G)+list(ACCENT):
     body,mode,label=normalize_body(c);BODIES[c]=body;LABELS[c]=label
 assert len(ACCENT)==54
 
+
+# Additional directly encoded symbols and programming ligatures.
+def symbol_paths(*paths, weight=48):
+    return union([stroke(path(p),weight,'round') for p in paths])
+
+EXTRA_SYMBOLS={
+    '↔':(symbol_paths('M0 300 L620 300','M160 460 L0 300 L160 140','M460 460 L620 300 L460 140'), 'Double-headed spear'),
+    '⇐':(symbol_paths('M200 245 L620 245','M200 355 L620 355','M215 500 L0 300 L215 100',weight=40), 'Twin-rail left arrow'),
+    '⇒':(symbol_paths('M0 245 L420 245','M0 355 L420 355','M405 500 L620 300 L405 100',weight=40), 'Twin-rail right arrow'),
+    '⇔':(symbol_paths('M200 245 L420 245','M200 355 L420 355','M215 500 L0 300 L215 100','M405 500 L620 300 L405 100',weight=40), 'Twin-rail bidirectional arrow'),
+    '≡':(symbol_paths('M0 140 L500 140','M0 300 L500 300','M0 460 L500 460',weight=50), 'Triple-bar identity'),
+    '≢':(symbol_paths('M0 140 L500 140','M0 300 L500 300','M0 460 L500 460','M150 40 L350 560',weight=44), 'Slashed identity'),
+    '≈':(symbol_paths('M0 230 C140 410 360 50 500 230','M0 400 C140 580 360 220 500 400',weight=46), 'Ribbon approximation'),
+}
+for c,(body,label) in EXTRA_SYMBOLS.items():
+    BODIES[c]=body;LABELS[c]=label
+LIGATURES={
+    '<=':'≤','>=':'≥','!=':'≠','==':'=','===':'≡','!==':'≢',
+    '<-':'←','->':'→','<->':'↔','=>':'⇒','<=>':'⇔',
+    '<--':'←','-->':'→','<==':'⇐','==>':'⇒','~=':'≈',
+}
+def ligature_name(sequence):
+    return 'lig_'+'_'.join(f'{ord(c):04X}' for c in sequence)
+
 FAMILIES=[('MixedCompany','MixedCompany',False),('MixedCompany Mono','MixedCompanyMono',True)]
 BUILT={}
 for family,stem,mono in FAMILIES:
@@ -970,23 +994,38 @@ for family,stem,mono in FAMILIES:
     for c,body in BODIES.items():
         g,adv=fit_glyph(c,body,mono);name='uni%04X'%ord(c)
         shapes[c]=g;glyphs[name]=as_glyph(g);metrics[name]=(adv,round(g.bounds[0]));cmap[ord(c)]=name
+    for sequence,symbol in LIGATURES.items():
+        g=BODIES[symbol]
+        advance=sum(metrics[cmap[ord(c)]][0] for c in sequence)
+        x1,y1,x2,y2=g.bounds
+        # Multi-character glyphs retain the original text's total advance.
+        g=scale(translate(g,xoff=-x1),xfact=(advance-108)/(x2-x1),yfact=1,origin=(0,0))
+        g=translate(g,xoff=54)
+        name=ligature_name(sequence)
+        glyphs[name]=as_glyph(g);metrics[name]=(advance,54)
     fb=FontBuilder(1000,isTTF=True);fb.setupGlyphOrder(list(glyphs));fb.setupCharacterMap(cmap);fb.setupGlyf(glyphs)
     fb.setupHorizontalMetrics(metrics);fb.setupHorizontalHeader(ascent=1040,descent=-380,lineGap=0)
-    fb.setupNameTable({'familyName':family,'styleName':'Regular','uniqueFontIdentifier':family+' 3.001 Original 2026',
-    'fullName':family+' Regular','psName':stem+'-Regular','version':'Version 3.001',
+    fb.setupNameTable({'familyName':family,'styleName':'Regular','uniqueFontIdentifier':family+' 3.002 Original 2026',
+    'fullName':family+' Regular','psName':stem+'-Regular','version':'Version 3.002',
     'copyright':'Original vector design created for Stuart Alldred, 2026.',
-    'description':'Wild display lettering with separately styled accented character bodies. '+('Every character has a 640-unit advance.' if mono else 'Proportional widths and optical kerning.')})
+    'description':'Wild display lettering with separately styled accented character bodies. '+('Each character has a 640-unit advance; ligatures preserve their input column count.' if mono else 'Proportional widths and optical kerning.')})
     fb.setupOS2(sTypoAscender=1040,sTypoDescender=-380,sTypoLineGap=0,usWinAscent=1040,usWinDescent=380,
                 sxHeight=520,sCapHeight=710,usWeightClass=400,usWidthClass=5,fsType=0,fsSelection=0x40)
     fb.font['OS/2'].panose.bFamilyType=2;fb.font['OS/2'].panose.bProportion=9 if mono else 0
-    fb.setupPost(isFixedPitch=1 if mono else 0);fb.setupMaxp();fb.font['head'].fontRevision=3.001
+    fb.setupPost(isFixedPitch=1 if mono else 0);fb.setupMaxp();fb.font['head'].fontRevision=3.002
+    from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
+    feature=''
     if not mono:
-        from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
         pairs={p:v for p,v in {'AV':-30,'AW':-25,'AY':-35,'AT':-23,'VA':-30,'WA':-22,'YA':-30,'TA':-22,'To':-25,'Ta':-22,'Te':-20,'Yo':-28,'Ya':-25,'Vo':-24,'Va':-22,'Wo':-18,'Wa':-18,'LT':-20,'LY':-25,'FA':-18,'PA':-24}.items()}
         kt={(cmap[ord(pair[0])],cmap[ord(pair[1])]):value for pair,value in pairs.items()}
         kern=newTable('kern');kern.version=0;sub=KernTable_format_0();sub.version=0;sub.coverage=1;sub.kernTable=kt;kern.kernTables=[sub];fb.font['kern']=kern
         feature='feature kern {\n'+''.join(f'pos {a} {b} {v};\n' for (a,b),v in kt.items())+'} kern;'
-        addOpenTypeFeaturesFromString(fb.font,feature)
+    feature+='\nfeature liga {\n'
+    for sequence in sorted(LIGATURES,key=lambda seq:-len(seq)):
+        inputs=' '.join(cmap[ord(c)] for c in sequence)
+        feature+=f'sub {inputs} by {ligature_name(sequence)};\n'
+    feature+='} liga;'
+    addOpenTypeFeaturesFromString(fb.font,feature)
     fontpath=out/(stem+'-Regular.ttf');fb.save(fontpath)
     web=TTFont(fontpath);web.flavor='woff2';web.save(out/(stem+'-Regular.woff2'))
     BUILT[stem]={'family':family,'out':out,'font':fontpath,'mono':mono,'shapes':shapes,'cmap':cmap,'metrics':metrics}
@@ -1005,7 +1044,7 @@ for stem,info in BUILT.items():
     rule(112)
     text(80,166,'MixedCompany',179,True)
     text(80,378,'Gothic. Goo. Chalk. Pixels. And googly eyes.',33,bold=True)
-    text(80,440,'179 characters · 54 independently styled accented letters',26,color=MUTED)
+    text(80,440,'186 characters · 54 independently styled accented letters',26,color=MUTED)
     rule(503)
     text(80,537,'01 / THE CAPITALS',23,color=RED,bold=True)
     for row,s in enumerate(['ABCDEFGHIJKLM','NOPQRSTUVWXYZ']):
@@ -1074,10 +1113,13 @@ compare.save(ROOT/'outputs'/'MixedCompany-Spacing-Comparison.png')
 encoded={stem:base64.b64encode((info['out']/(stem+'-Regular.woff2')).read_bytes()).decode() for stem,info in BUILT.items()}
 cards=''.join('<div class="glyph"><span>'+html.escape(c)+'</span><small>'+html.escape(LABELS[c])+'</small></div>' for c in chars)
 page='''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MixedCompany / try both fonts</title><style>
-@font-face{font-family:MixedCompany;src:url(data:font/woff2;base64,PROPFONT) format('woff2')}@font-face{font-family:MixedCompanyMono;src:url(data:font/woff2;base64,MONOFONT) format('woff2')}*{box-sizing:border-box}body{margin:0;background:#f5f0e4;color:#252621;font:16px system-ui,sans-serif}main{max-width:1240px;padding:34px 28px;margin:auto}header{display:flex;justify-content:space-between;gap:24px;border-bottom:1px solid #c9c1b2;padding-bottom:24px;font-size:13px;letter-spacing:.07em}h1{font:clamp(43px,6.2vw,84px)/1.5 MixedCompany;margin:35px 0 14px}p{line-height:1.6;max-width:820px}nav{display:flex;flex-wrap:wrap;gap:22px;align-items:center;border-top:1px solid #c9c1b2;padding:23px 0;margin-top:30px}label{display:inline-flex;gap:10px;align-items:center;font-size:14px}select{padding:9px 12px;border:1px solid #b8b2a6;background:transparent;border-radius:4px;font:inherit}input{accent-color:#d33b31}textarea{font:74px/1.52 MixedCompany;width:100%;height:410px;background:transparent;color:inherit;border:1px solid #c9c1b2;resize:vertical;padding:20px;outline-color:#d33b31;font-synthesis:none}.mono{font-family:MixedCompanyMono;font-kerning:none;font-variant-ligatures:none}.tip{font-size:13px;color:#77766b}.status{min-height:24px;color:#b23c2f;font-size:14px}h2{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:#d33b31;margin:43px 0 22px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));border-left:1px solid #c9c1b2;border-top:1px solid #c9c1b2}.glyph{min-height:153px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid #c9c1b2;border-bottom:1px solid #c9c1b2;text-align:center;padding:5px}.glyph span{font:74px/1.5 MixedCompany}.grid.mono .glyph span{font-family:MixedCompanyMono}.glyph small{font-size:10px;color:#747466;line-height:1.4}footer{border-top:1px solid #c9c1b2;padding-top:20px;margin-top:40px;font-size:13px;color:#747466}</style>
+@font-face{font-family:MixedCompany;src:url(data:font/woff2;base64,PROPFONT) format('woff2')}@font-face{font-family:MixedCompanyMono;src:url(data:font/woff2;base64,MONOFONT) format('woff2')}*{box-sizing:border-box}body{margin:0;background:#f5f0e4;color:#252621;font:16px system-ui,sans-serif}main{max-width:1240px;padding:34px 28px;margin:auto}header{display:flex;justify-content:space-between;gap:24px;border-bottom:1px solid #c9c1b2;padding-bottom:24px;font-size:13px;letter-spacing:.07em}h1{font:clamp(43px,6.2vw,84px)/1.5 MixedCompany;margin:35px 0 14px}p{line-height:1.6;max-width:820px}nav{display:flex;flex-wrap:wrap;gap:22px;align-items:center;border-top:1px solid #c9c1b2;padding:23px 0;margin-top:30px}label{display:inline-flex;gap:10px;align-items:center;font-size:14px}select{padding:9px 12px;border:1px solid #b8b2a6;background:transparent;border-radius:4px;font:inherit}input{accent-color:#d33b31}textarea{font:74px/1.52 MixedCompany;width:100%;height:410px;background:transparent;color:inherit;border:1px solid #c9c1b2;resize:vertical;padding:20px;outline-color:#d33b31;font-synthesis:none}.mono{font-family:MixedCompanyMono;font-kerning:none;font-variant-ligatures:common-ligatures}.tip{font-size:13px;color:#77766b}.status{min-height:24px;color:#b23c2f;font-size:14px}h2{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:#d33b31;margin:43px 0 22px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));border-left:1px solid #c9c1b2;border-top:1px solid #c9c1b2}.glyph{min-height:153px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid #c9c1b2;border-bottom:1px solid #c9c1b2;text-align:center;padding:5px}.glyph span{font:74px/1.5 MixedCompany}.grid.mono .glyph span{font-family:MixedCompanyMono}.glyph small{font-size:10px;color:#747466;line-height:1.4}footer{border-top:1px solid #c9c1b2;padding-top:20px;margin-top:40px;font-size:13px;color:#747466}</style>
 <main><header><strong>MIXEDCOMPANY</strong><span>STANDARD + MONO</span></header><h1>MixedCompany</h1><p>Gothic, goo, chalk, pixels, handwriting, vines, bones and more. Every accented character has an independently styled body. Switch between proportional spacing and a strict one-character-per-column grid.</p><nav><label>Font <select id="face"><option value="MixedCompany">Proportional</option><option value="MixedCompanyMono">Monospaced</option></select></label><label>Size <input id="size" type="range" min="28" max="150" value="74"><output id="sizeout">74 px</output></label><label>Ink <input id="ink" type="color" value="#252621"></label></nav><textarea id="tester" aria-label="Try the MixedCompany fonts" spellcheck="false">A little weird? Voilà!
 A À Á Â Ã Ä Å
-u ù ú û ü  2</textarea><p class="tip">Both fonts are embedded for offline use. The fine textures work best at larger sizes. Repeated characters retain their assigned designs.</p><p id="status" class="status" aria-live="polite"></p><h2>179 characters / 54 independently styled accented bodies</h2><section class="grid" id="grid">CARDS</section><footer>Install MixedCompany-Regular.ttf or MixedCompanyMono-Regular.ttf. Use precomposed accented letters; unsupported characters may display in a fallback font. Selected Latin coverage.</footer></main><script>
+u ù ú û ü  2
+&lt;= >= != == === !==
+&lt;- -> &lt;-> => &lt;=>
+&lt;-- --> &lt;== ==> ~=</textarea><p class="tip">Both fonts are embedded for offline use. Common ligatures combine typed operators; Mono preserves their column count. The fine textures work best at larger sizes. Repeated characters retain their assigned designs.</p><p id="status" class="status" aria-live="polite"></p><h2>186 characters / 54 independently styled accented bodies</h2><section class="grid" id="grid">CARDS</section><footer>Install MixedCompany-Regular.ttf or MixedCompanyMono-Regular.ttf. Use precomposed accented letters; unsupported characters may display in a fallback font. Selected Latin coverage.</footer></main><script>
 const tester=document.querySelector('#tester'),face=document.querySelector('#face'),size=document.querySelector('#size'),ink=document.querySelector('#ink'),grid=document.querySelector('#grid');
 face.onchange=()=>{tester.style.fontFamily=face.value;tester.classList.toggle('mono',face.value==='MixedCompanyMono');grid.classList.toggle('mono',face.value==='MixedCompanyMono')};size.oninput=()=>{tester.style.fontSize=size.value+'px';document.querySelector('#sizeout').value=size.value+' px'};ink.oninput=()=>tester.style.color=ink.value;
 const supported=new Set(CODEPOINTS);tester.oninput=()=>{const missing=[...new Set([...tester.value].filter(c=>!supported.has(c.codePointAt(0))&&!/\\s/.test(c)))];document.querySelector('#status').textContent=missing.length?'Outside this character set: '+missing.join(' '):''};tester.oninput();
@@ -1095,6 +1137,6 @@ for c in ACCENT:
     a,b=unit(BODIES[c]),unit(BODIES[parent]);overlap=a.intersection(b).area/a.union(b).area
     body_differences[c]={'parent':parent,'body_overlap':round(overlap,4),'style':LABELS[c]}
     assert overlap<.80,(c,parent,'accent body too close to parent',overlap)
-report={'version':'3.001','families':[f[0] for f in FAMILIES],'encoded_characters':len(info['cmap']),'independent_accent_bodies':len(ACCENT),'styles':LABELS,'accent_body_comparisons':body_differences}
+report={'version':'3.002','families':[f[0] for f in FAMILIES],'encoded_characters':len(info['cmap']),'independent_accent_bodies':len(ACCENT),'styles':LABELS,'ligatures':LIGATURES,'accent_body_comparisons':body_differences}
 (ROOT/'work'/'font-report.json').write_text(json.dumps(report,indent=2,ensure_ascii=False))
 print(json.dumps({'families':report['families'],'characters':report['encoded_characters'],'independent_accent_bodies':len(ACCENT),'maximum_accent_parent_body_overlap':max(d['body_overlap'] for d in body_differences.values())},indent=2))

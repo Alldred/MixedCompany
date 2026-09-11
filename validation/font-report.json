@@ -1,10 +1,10 @@
 {
-  "version": "3.001",
+  "version": "3.002",
   "families": [
     "MixedCompany",
     "MixedCompany Mono"
   ],
-  "encoded_characters": 179,
+  "encoded_characters": 186,
   "independent_accent_bodies": 54,
   "styles": {
     "A": "Gothic blackletter",
@@ -183,7 +183,32 @@
     "û": "Sawblade u",
     "ü": "Bent-wire u",
     "ý": "Lightning y",
-    "ÿ": "Crystalline y"
+    "ÿ": "Crystalline y",
+    "↔": "Double-headed spear",
+    "⇐": "Twin-rail left arrow",
+    "⇒": "Twin-rail right arrow",
+    "⇔": "Twin-rail bidirectional arrow",
+    "≡": "Triple-bar identity",
+    "≢": "Slashed identity",
+    "≈": "Ribbon approximation"
+  },
+  "ligatures": {
+    "<=": "≤",
+    ">=": "≥",
+    "!=": "≠",
+    "==": "=",
+    "===": "≡",
+    "!==": "≢",
+    "<-": "←",
+    "->": "→",
+    "<->": "↔",
+    "=>": "⇒",
+    "<=>": "⇔",
+    "<--": "←",
+    "-->": "→",
+    "<==": "⇐",
+    "==>": "⇒",
+    "~=": "≈"
   },
   "accent_body_comparisons": {
     "À": {
