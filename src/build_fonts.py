@@ -902,6 +902,12 @@ G['i']=[path('M-55 490 L0 490 L0 0 L70 0'),[(0,675)]]
 G['m']=[path('M0 0 L0 500'),path('M0 340 C0 570 285 570 285 340 L285 0'),path('M285 340 C285 570 570 570 570 340 L570 0')]
 
 def body_raw(c):
+    if c=='`':
+        # A pierced dragon tooth: broad upper-left head, barbs and a tapered tip.
+        tooth=Polygon([(-30,798),(64,770),(78,729),(123,745),(108,692),
+                       (181,542),(67,602),(58,646),(7,637),(26,688),(-29,732)])
+        eye=Polygon(oval(22,741,16,22))
+        return tooth.difference(eye),c,60,0,'dragon_tooth','Barbed dragon-tooth backtick'
     if c in ACCENT:
         base,mark,paths=accented_skeleton(c);mode,w,slant,label=ACCENT[c]
         return themed(paths,mode,w,c),base,w,slant,mode,label
@@ -1005,14 +1011,14 @@ for family,stem,mono in FAMILIES:
         glyphs[name]=as_glyph(g);metrics[name]=(advance,54)
     fb=FontBuilder(1000,isTTF=True);fb.setupGlyphOrder(list(glyphs));fb.setupCharacterMap(cmap);fb.setupGlyf(glyphs)
     fb.setupHorizontalMetrics(metrics);fb.setupHorizontalHeader(ascent=1040,descent=-380,lineGap=0)
-    fb.setupNameTable({'familyName':family,'styleName':'Regular','uniqueFontIdentifier':family+' 3.002 Original 2026',
-    'fullName':family+' Regular','psName':stem+'-Regular','version':'Version 3.002',
+    fb.setupNameTable({'familyName':family,'styleName':'Regular','uniqueFontIdentifier':family+' 3.003 Original 2026',
+    'fullName':family+' Regular','psName':stem+'-Regular','version':'Version 3.003',
     'copyright':'Original vector design created for Stuart Alldred, 2026.',
     'description':'Wild display lettering with separately styled accented character bodies. '+('Each character has a 640-unit advance; ligatures preserve their input column count.' if mono else 'Proportional widths and optical kerning.')})
     fb.setupOS2(sTypoAscender=1040,sTypoDescender=-380,sTypoLineGap=0,usWinAscent=1040,usWinDescent=380,
                 sxHeight=520,sCapHeight=710,usWeightClass=400,usWidthClass=5,fsType=0,fsSelection=0x40)
     fb.font['OS/2'].panose.bFamilyType=2;fb.font['OS/2'].panose.bProportion=9 if mono else 0
-    fb.setupPost(isFixedPitch=1 if mono else 0);fb.setupMaxp();fb.font['head'].fontRevision=3.002
+    fb.setupPost(isFixedPitch=1 if mono else 0);fb.setupMaxp();fb.font['head'].fontRevision=3.003
     from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
     feature=''
     if not mono:
@@ -1137,6 +1143,6 @@ for c in ACCENT:
     a,b=unit(BODIES[c]),unit(BODIES[parent]);overlap=a.intersection(b).area/a.union(b).area
     body_differences[c]={'parent':parent,'body_overlap':round(overlap,4),'style':LABELS[c]}
     assert overlap<.80,(c,parent,'accent body too close to parent',overlap)
-report={'version':'3.002','families':[f[0] for f in FAMILIES],'encoded_characters':len(info['cmap']),'independent_accent_bodies':len(ACCENT),'styles':LABELS,'ligatures':LIGATURES,'accent_body_comparisons':body_differences}
+report={'version':'3.003','families':[f[0] for f in FAMILIES],'encoded_characters':len(info['cmap']),'independent_accent_bodies':len(ACCENT),'styles':LABELS,'ligatures':LIGATURES,'accent_body_comparisons':body_differences}
 (ROOT/'work'/'font-report.json').write_text(json.dumps(report,indent=2,ensure_ascii=False))
 print(json.dumps({'families':report['families'],'characters':report['encoded_characters'],'independent_accent_bodies':len(ACCENT),'maximum_accent_parent_body_overlap':max(d['body_overlap'] for d in body_differences.values())},indent=2))

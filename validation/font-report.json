@@ -1,5 +1,5 @@
 {
-  "version": "3.002",
+  "version": "3.003",
   "families": [
     "MixedCompany",
     "MixedCompany Mono"
@@ -96,7 +96,7 @@
     "]": "serif right bracket",
     "^": "contrasted caret",
     "_": "inlaid underscore",
-    "`": "cut acute-backtick",
+    "`": "Barbed dragon-tooth backtick",
     "{": "Feather brace",
     "|": "hollow vertical pipe",
     "}": "Coral brace",

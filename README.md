@@ -5,7 +5,7 @@ One exuberant design, available in two spacing versions:
 - **MixedCompany** — standard, proportional spacing with kerning.
 - **MixedCompany Mono** — a fixed 640-unit advance for every character.
 
-Both use the latest wild drawings: gothic, pixels, handwriting, chalk, goo, bones, woven strokes and more. Lowercase **o** has googly eyes. All 54 accented letters have independently styled bodies.
+Both use the latest wild drawings: gothic, pixels, handwriting, chalk, goo, bones, woven strokes and more. Lowercase **o** has googly eyes. The backtick is a pierced, barbed dragon tooth. All 54 accented letters have independently styled bodies.
 
 ## Downloads
 
@@ -19,6 +19,8 @@ Both use the latest wild drawings: gothic, pixels, handwriting, chalk, goo, bone
 ![MixedCompany specimen](outputs/MixedCompany/MixedCompany-Preview.png)
 
 Install the TTF files in your operating system, then select MixedCompany or MixedCompany Mono. The tester embeds both fonts for offline use. These fonts replace the earlier designs; previous releases remain in Git history. “Wild Company” is not a separate family.
+
+[Backtick before and after](outputs/MixedCompany-Backtick.png)
 
 ## Programming symbols
 
