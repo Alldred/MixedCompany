@@ -15,7 +15,7 @@ Two fonts: **MixedCompany** (proportional) and **MixedCompany Mono** (fixed widt
 | MixedCompany | [Regular](outputs/MixedCompany/MixedCompany-Regular.ttf) | [Regular](outputs/MixedCompany/MixedCompany-Regular.woff2) |
 | MixedCompany Mono | [Regular](outputs/MixedCompanyMono/MixedCompanyMono-Regular.ttf) | [Regular](outputs/MixedCompanyMono/MixedCompanyMono-Regular.woff2) |
 
-[All files](outputs/MixedCompany-Package.zip) · [Offline tester](outputs/MixedCompany-Try-It.html)
+[All files](outputs/MixedCompany-Package.zip)
 
 [Character set](outputs/MixedCompany-Character-Atlas.png) · [Accents](outputs/MixedCompany-Accent-Families.png) · [Proportional vs mono](outputs/MixedCompany-Spacing-Comparison.png)
 
