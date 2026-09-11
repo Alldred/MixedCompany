@@ -1,30 +1,27 @@
 # MixedCompany
 
-One exuberant design, available in two spacing versions:
+A display typeface. Every letter is its own drawing, including the accented ones.
 
-- **MixedCompany** — standard, proportional spacing with kerning.
-- **MixedCompany Mono** — a fixed 640-unit advance for every character.
+Two fonts: **MixedCompany** (proportional) and **MixedCompany Mono** (fixed width).
 
-Both use the latest wild drawings: gothic, pixels, handwriting, chalk, goo, bones, woven strokes and more. Lowercase **o** has googly eyes. The backtick is a pierced, barbed dragon tooth. All 54 accented letters have independently styled bodies.
+[Try it](https://alldred.github.io/MixedCompany/)
 
-## Downloads
+![MixedCompany](outputs/MixedCompany/MixedCompany-Preview.png)
 
-| Font | Installable | Web |
+## Download
+
+| | TTF | WOFF2 |
 | --- | --- | --- |
-| MixedCompany | [TTF](outputs/MixedCompany/MixedCompany-Regular.ttf) | [WOFF2](outputs/MixedCompany/MixedCompany-Regular.woff2) |
-| MixedCompany Mono | [TTF](outputs/MixedCompanyMono/MixedCompanyMono-Regular.ttf) | [WOFF2](outputs/MixedCompanyMono/MixedCompanyMono-Regular.woff2) |
+| MixedCompany | [Regular](outputs/MixedCompany/MixedCompany-Regular.ttf) | [Regular](outputs/MixedCompany/MixedCompany-Regular.woff2) |
+| MixedCompany Mono | [Regular](outputs/MixedCompanyMono/MixedCompanyMono-Regular.ttf) | [Regular](outputs/MixedCompanyMono/MixedCompanyMono-Regular.woff2) |
 
-[Try both fonts](https://alldred.github.io/MixedCompany/) · [Complete package](outputs/MixedCompany-Package.zip) · [Offline tester](outputs/MixedCompany-Try-It.html) · [Spacing comparison](outputs/MixedCompany-Spacing-Comparison.png) · [Character atlas](outputs/MixedCompany-Character-Atlas.png) · [Accent families](outputs/MixedCompany-Accent-Families.png)
+[All files](outputs/MixedCompany-Package.zip) · [Offline tester](outputs/MixedCompany-Try-It.html)
 
-![MixedCompany specimen](outputs/MixedCompany/MixedCompany-Preview.png)
+[Character set](outputs/MixedCompany-Character-Atlas.png) · [Accents](outputs/MixedCompany-Accent-Families.png) · [Proportional vs mono](outputs/MixedCompany-Spacing-Comparison.png)
 
-Install the TTF files in your operating system, then select MixedCompany or MixedCompany Mono. The tester embeds both fonts for offline use. These fonts replace the earlier designs; previous releases remain in Git history. “Wild Company” is not a separate family.
+## Ligatures
 
-[Backtick before and after](outputs/MixedCompany-Backtick.png)
-
-## Programming symbols
-
-Both fonts include 16 independently drawn common ligatures. Each sequence has its own construction and texture; short and long arrows have separate designs:
+With standard ligatures on:
 
 ```
 <=  >=  !=  ==  ===  !==
@@ -32,47 +29,19 @@ Both fonts include 16 independently drawn common ligatures. Each sequence has it
 <--  -->  <==  ==>  ~=
 ```
 
-Enable standard/common ligatures in your application to join these sequences visually. The underlying text stays the same. Mono preserves the input column count: two characters occupy 1280 units, three occupy 1920 units. Disable the OpenType liga feature to show the individual characters again. Applications without ligature support display the original sequence.
+Also in the font: ≤ ≥ ≠ ← → ↔ ⇐ ⇒ ⇔ ≡ ≢ ≈
 
-Directly insertable symbols include ≤ ≥ ≠ ← → and the new ↔ ⇐ ⇒ ⇔ ≡ ≢ ≈. Each directly inserted symbol occupies one Mono column.
+[Proportional](outputs/MixedCompany/MixedCompany-Ligatures.png) · [Mono](outputs/MixedCompanyMono/MixedCompanyMono-Ligatures.png)
 
-[Standard ligature proof](outputs/MixedCompany/MixedCompany-Ligatures.png) · [Mono ligature proof](outputs/MixedCompanyMono/MixedCompanyMono-Ligatures.png)
+186 characters. Display sizes. No combining marks.
 
-## Rebuild
-
-Using Python 3.12. Validation and ligature proofs also require the HarfBuzz command-line tools (hb-shape and hb-view) on PATH:
+## Source
 
 ```sh
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 python src/build_fonts.py
-python src/validate_fonts.py
-python src/preview_ligatures.py
-python src/preview_pairs.py
 ```
 
-The builder regenerates both fonts, previews and the tester in outputs/. Pushing to main publishes the tester to [GitHub Pages](https://alldred.github.io/MixedCompany/). Reports and extracted tester JavaScript go in work/. The release ZIP and validation/ reports are saved snapshots.
-
-The original vector drawings live in src/build_fonts.py. No existing font outlines are used. Preview annotations use macOS Arial; adjust the ui and uib paths for other platforms.
-
-## Contrast review
-
-Version 3.004 revises 38 character designs and all 16 ligatures. The review covers 31 related-character groups and all uppercase/lowercase pairs, including angles, brackets, quotes, dashes, arrows, mirrored letters and common lookalikes.
-
-The left angle is pixelated; the right angle uses brushwork. Parentheses contrast broad ink with beads. Double arrows have slotted, half-solid and button-thread constructions. Quotes contrast curls, pixels, stripes and hollow loops. Letter-pair changes include C/c, V/v, W/w, P/p, X/x, T/I and Z/z.
-
-Proof sheets show both spacing versions at 76 and 40 px:
-[Symbols](outputs/MixedCompany-Contrast-1.png) · [Punctuation and lookalikes](outputs/MixedCompany-Contrast-2.png) · [Letters](outputs/MixedCompany-Contrast-3.png) · [More letters](outputs/MixedCompany-Contrast-4.png).
-
-[Recorded review and style assignments](validation/contrast-review.md). Normalized outline comparisons flag copied or mirrored constructions; they supplement visual judgment rather than measuring readability.
-
-## Coverage and validation
-
-Both versions contain 186 encoded characters, including printable ASCII, 54 precomposed Latin accents and selected punctuation, currencies, maths symbols and arrows. Combining accent sequences and full Unicode coverage are not implemented. Repeated occurrences retain their assigned design. Fine textures work best at display sizes.
-
-Validation checks family names, matching character coverage, checksums, table compilation, glyph bounds and rendering at 48 and 128 pixels. Mono has fixed-pitch metadata, identical 640-unit advances and no kerning; ligatures span exactly two or three columns. Standard has variable advances and kerning. All 54 accented bodies are compared with their parents independently of their accent marks.
-
-HarfBuzz shaping checks every ligature, longest-match sequences, adjacent letters, disabled ligatures, separated operators and unchanged advances. Both proof sheets render the finished fonts through HarfBuzz. TTF and WOFF2 substitution tables match.
-
-Tester JavaScript syntax is checked. Browser interaction was not verified because the browser blocked local-file navigation.
+Python 3.12. Drawings are in `src/build_fonts.py`.

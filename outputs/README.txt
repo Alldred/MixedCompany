@@ -1,13 +1,13 @@
-MixedCompany 3.004
+MixedCompany
 
-MixedCompany: standard proportional spacing.
-MixedCompany Mono: fixed-width spacing.
+A display typeface. Every letter is its own drawing, including the accented ones.
 
-Both contain the latest wild designs, independent accented bodies and googly-eyed lowercase o. Install the TTF files in the two family folders, or open MixedCompany-Try-It.html to try both offline.
+MixedCompany — proportional
+MixedCompany Mono — fixed width
 
-16 common programming ligatures: <= >= != == === !== <- -> <-> => <=> <-- --> <== ==> ~=
-Enable standard/common ligatures in your application. Mono keeps each sequence at its original two- or three-column width. Added Unicode symbols: ↔ ⇐ ⇒ ⇔ ≡ ≢ ≈.
+Install the TTF files, or open MixedCompany-Try-It.html to try both.
 
-Backtick updated with a pierced dragon-tooth design in both fonts.
+Ligatures (enable standard/common ligatures):
+<= >= != == === !== <- -> <-> => <=> <-- --> <== ==> ~=
 
-Contrast revision: 38 character designs and all 16 ligatures updated. Four comparison sheets cover 31 related-character groups in standard and mono.
+Also in the font: ≤ ≥ ≠ ← → ↔ ⇐ ⇒ ⇔ ≡ ≢ ≈
