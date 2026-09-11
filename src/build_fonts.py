@@ -833,6 +833,38 @@ PRIMARY={
 '→':('copper_pipe',82,0,'Pipework arrow'),
 '↑':('crown',32,0,'Crowned arrow'),
 '↓':('icicle',43,0,'Falling icicle')}
+# Deliberately contrasting constructions for visually related characters.
+PRIMARY.update({
+    '<':('pixels',110,0,'Arcade stair-step angle'),
+    '>':('brush_ink',92,0,'Sweeping brush angle'),
+    '(':('brush_ink',110,0,'Broad ink parenthesis'),
+    ')':('beads',68,0,'Pearl-bead parenthesis'),
+    ']':('pixels',115,0,'Pixel gate bracket'),
+    '{':('filigree',39,0,'Scrolled iron brace'),
+    '}':('thorns',79,0,'Thorny hedge brace'),
+    chr(92):('candy',122,0,'Striped ribbon backslash'),
+    '–':('bone',75,0,'Knuckled en dash'),
+    '—':('chain',113,0,'Chain-link em dash'),
+    '−':('circuit',54,0,'Terminal-ring minus'),
+    '‘':('filigree',34,0,'Curlicue opening quote'),
+    '’':('pixels',94,0,'Pixel-chip closing quote'),
+    '“':('candy',115,0,'Striped pennant quotes'),
+    '”':('hairpin',83,0,'Hollow loop quotes'),
+    '¡':('chain',91,0,'Chain inverted exclamation'),
+    '¿':('copper_pipe',97,0,'Plumbed inverted question'),
+    '≤':('circuit',65,0,'Electronic less-or-equal'),
+    '≥':('candy',114,0,'Candy-stripe greater-or-equal'),
+    '≠':('duotone',89,0,'Half-filled unequal'),
+    '×':('chain',83,0,'Chain-link multiplication'),
+    'c':('buttons',65,0,'Buttoned lowercase c'),
+    'v':('lace',101,0,'Lace-collar v'),
+    'w':('balloon',82,0,'Inflated lowercase w'),
+    'X':('duotone',121,0,'Half-solid capital X'),
+    'T':('stone',125,0,'Carved stone T'),
+    'P':('crown',43,0,'Crowned capital P'),
+    'Z':('zipper',90,0,'Zipped capital Z'),
+})
+assert set(PRIMARY)<=set(G), set(PRIMARY)-set(G)
 # One complete body treatment per accented character. No composite parent glyphs.
 ACCENT={
 'À':('pixel_mosaic',115,0,'Mosaic A'), 'Á':('brush_ink',100,.13,'Brush A'),
@@ -902,6 +934,17 @@ G['i']=[path('M-55 490 L0 490 L0 0 L70 0'),[(0,675)]]
 G['m']=[path('M0 0 L0 500'),path('M0 340 C0 570 285 570 285 340 L285 0'),path('M285 340 C285 570 570 570 570 340 L570 0')]
 
 def body_raw(c):
+    if c=='_':
+        g=box(0,-143,470,-96)
+        teeth=[Polygon([(x,-141),(x+38,-191),(x+76,-141)]) for x in range(0,400,80)]
+        return union([g,*teeth]),c,70,0,'saw_hem','Saw-edge underscore'
+    if c=='…':
+        rings=union([Point(x,30).buffer(44,quad_segs=16).difference(Point(x,30).buffer(25,quad_segs=16)) for x in [0,200,400]])
+        return rings,c,60,0,'ring_stops','Three open-ring stops'
+    if c=='"':
+        flags=union([Polygon([(0,750),(95,750),(70,540),(10,600)]),
+                     Polygon([(155,725),(210,725),(190,545),(160,545)])])
+        return flags,c,80,0,'flag_quotes','Mismatched flag quotes'
     if c=='`':
         # A pierced dragon tooth: broad upper-left head, barbs and a tapered tip.
         tooth=Polygon([(-30,798),(64,770),(78,729),(123,745),(108,692),
@@ -970,15 +1013,26 @@ assert len(ACCENT)==54
 def symbol_paths(*paths, weight=48):
     return union([stroke(path(p),weight,'round') for p in paths])
 
-EXTRA_SYMBOLS={
-    '↔':(symbol_paths('M0 300 L620 300','M160 460 L0 300 L160 140','M460 460 L620 300 L460 140'), 'Double-headed spear'),
-    '⇐':(symbol_paths('M200 245 L620 245','M200 355 L620 355','M215 500 L0 300 L215 100',weight=40), 'Twin-rail left arrow'),
-    '⇒':(symbol_paths('M0 245 L420 245','M0 355 L420 355','M405 500 L620 300 L405 100',weight=40), 'Twin-rail right arrow'),
-    '⇔':(symbol_paths('M200 245 L420 245','M200 355 L420 355','M215 500 L0 300 L215 100','M405 500 L620 300 L405 100',weight=40), 'Twin-rail bidirectional arrow'),
-    '≡':(symbol_paths('M0 140 L500 140','M0 300 L500 300','M0 460 L500 460',weight=50), 'Triple-bar identity'),
-    '≢':(symbol_paths('M0 140 L500 140','M0 300 L500 300','M0 460 L500 460','M150 40 L350 560',weight=44), 'Slashed identity'),
-    '≈':(symbol_paths('M0 230 C140 410 360 50 500 230','M0 400 C140 580 360 220 500 400',weight=46), 'Ribbon approximation'),
+EXTRA_PATHS={
+    '↔':['M0 300 L620 300','M160 460 L0 300 L160 140','M460 460 L620 300 L460 140'],
+    '⇐':['M200 245 L620 245','M200 355 L620 355','M215 500 L0 300 L215 100'],
+    '⇒':['M0 245 L420 245','M0 355 L420 355','M405 500 L620 300 L405 100'],
+    '⇔':['M200 225 L420 225','M200 375 L420 375','M215 520 L0 300 L215 80','M405 520 L620 300 L405 80'],
+    '≡':['M0 140 L500 140','M0 300 L500 300','M0 460 L500 460'],
+    '≢':['M0 140 L500 140','M0 300 L500 300','M0 460 L500 460','M150 40 L350 560'],
+    '≈':['M0 230 C140 410 360 50 500 230','M0 400 C140 580 360 220 500 400'],
 }
+EXTRA_THEMES={
+    '↔':('saw',32,'Sawtooth bridge arrow'),
+    '⇐':('piano',94,'Slotted double left arrow'),
+    '⇒':('duotone',78,'Half-solid double right arrow'),
+    '⇔':('buttons',54,'Button-thread double bridge'),
+    '≡':('hairpin',72,'Three hollow rails'),
+    '≢':('chrome',95,'Chrome identity slash'),
+    '≈':('candy',100,'Striped wave ribbons'),
+}
+EXTRA_SYMBOLS={c:(themed([path(p) for p in EXTRA_PATHS[c]],mode,w,c),label)
+               for c,(mode,w,label) in EXTRA_THEMES.items()}
 for c,(body,label) in EXTRA_SYMBOLS.items():
     BODIES[c]=body;LABELS[c]=label
 LIGATURES={
@@ -986,6 +1040,41 @@ LIGATURES={
     '<-':'←','->':'→','<->':'↔','=>':'⇒','<=>':'⇔',
     '<--':'←','-->':'→','<==':'⇐','==>':'⇒','~=':'≈',
 }
+
+# Each sequence is drawn independently, including short/long arrow variants.
+LIGATURE_SPECS={
+    '<=':('stone',108,'Fractured stone comparison',['M510 530 L30 300 L510 70','M30 -100 L510 -100']),
+    '>=':('beads',77,'Pearl comparison',['M20 540 L540 300 L20 60','M20 -100 L540 -100']),
+    '!=':('stencil',92,'Stencil slash',['M0 175 L570 175','M0 420 L570 420','M155 15 L400 580']),
+    '==':('stitch',113,'Stitched leather straps',['M0 170 L570 170','M0 430 L570 430']),
+    '===':('ripple',61,'Three rippling ribbons',['M0 105 L580 105','M0 300 L580 300','M0 495 L580 495']),
+    '!==':('thorns',44,'Barbed identity',['M0 95 L570 95','M0 300 L570 300','M0 505 L570 505','M120 -5 L430 610']),
+    '<-':('feather',30,'Quill arrow',['M0 300 L660 300','M240 540 L0 300 L240 60']),
+    '->':('pixel_mosaic',109,'Arcade rocket',['M0 300 L660 300','M420 540 L660 300 L420 60']),
+    '<->':('chain',83,'Chain-link bridge',['M0 300 L700 300','M190 490 L0 300 L190 110','M510 490 L700 300 L510 110']),
+    '=>':('blackletter_arrow',70,'Blackletter double arrow',['M0 210 L475 210','M0 390 L475 390','M420 560 L720 300 L420 40']),
+    '<=>':('neon',88,'Hollow neon bridge',['M185 205 L515 205','M185 395 L515 395','M220 545 L0 300 L220 55','M480 545 L700 300 L480 55']),
+    '<--':('goo',99,'Melting arrow',['M0 340 L710 340','M230 590 L0 340 L230 90']),
+    '-->':('brush_ink',109,'Ink comet',['M0 280 Q355 380 710 300','M435 540 Q570 395 710 300 Q540 240 440 50']),
+    '<==':('bricks',104,'Brickwork double arrow',['M190 205 L710 205','M190 395 L710 395','M230 560 L0 300 L230 40']),
+    '==>':('bone',52,'Skeleton double arrow',['M0 195 L490 195','M0 405 L490 405','M460 560 L720 300 L460 40']),
+    '~=':('scribble',60,'Pencil-wave approximation',['M0 195 C175 405 410 -15 610 195','M0 410 C175 620 410 200 610 410']),
+}
+LIGATURE_BODIES={};LIGATURE_LABELS={}
+for i,(sequence,(mode,w,label,drawings)) in enumerate(LIGATURE_SPECS.items()):
+    paths=[path(p) for p in drawings]
+    if mode=='stencil':
+        g=union([stroke(q,w,'flat') for q in paths])
+        g=g.difference(union([box(55,100,78,480),box(468,100,491,480)]))
+    elif mode=='blackletter_arrow':
+        g=union([nib_stroke(paths[:2],72,-28),nib_stroke(paths[2:],124,-42),
+                 diamonds([(0,210),(0,390)],46)])
+    elif mode=='neon':
+        outer=union([stroke(q,w,'round') for q in paths])
+        g=outer.difference(outer.buffer(-15))
+    else:g=themed(paths,mode,w,chr(0xE100+i))
+    LIGATURE_BODIES[sequence]=g;LIGATURE_LABELS[sequence]=label
+
 def ligature_name(sequence):
     return 'lig_'+'_'.join(f'{ord(c):04X}' for c in sequence)
 
@@ -1001,7 +1090,7 @@ for family,stem,mono in FAMILIES:
         g,adv=fit_glyph(c,body,mono);name='uni%04X'%ord(c)
         shapes[c]=g;glyphs[name]=as_glyph(g);metrics[name]=(adv,round(g.bounds[0]));cmap[ord(c)]=name
     for sequence,symbol in LIGATURES.items():
-        g=BODIES[symbol]
+        g=LIGATURE_BODIES[sequence]
         advance=sum(metrics[cmap[ord(c)]][0] for c in sequence)
         x1,y1,x2,y2=g.bounds
         # Multi-character glyphs retain the original text's total advance.
@@ -1011,14 +1100,14 @@ for family,stem,mono in FAMILIES:
         glyphs[name]=as_glyph(g);metrics[name]=(advance,54)
     fb=FontBuilder(1000,isTTF=True);fb.setupGlyphOrder(list(glyphs));fb.setupCharacterMap(cmap);fb.setupGlyf(glyphs)
     fb.setupHorizontalMetrics(metrics);fb.setupHorizontalHeader(ascent=1040,descent=-380,lineGap=0)
-    fb.setupNameTable({'familyName':family,'styleName':'Regular','uniqueFontIdentifier':family+' 3.003 Original 2026',
-    'fullName':family+' Regular','psName':stem+'-Regular','version':'Version 3.003',
+    fb.setupNameTable({'familyName':family,'styleName':'Regular','uniqueFontIdentifier':family+' 3.004 Original 2026',
+    'fullName':family+' Regular','psName':stem+'-Regular','version':'Version 3.004',
     'copyright':'Original vector design created for Stuart Alldred, 2026.',
     'description':'Wild display lettering with separately styled accented character bodies. '+('Each character has a 640-unit advance; ligatures preserve their input column count.' if mono else 'Proportional widths and optical kerning.')})
     fb.setupOS2(sTypoAscender=1040,sTypoDescender=-380,sTypoLineGap=0,usWinAscent=1040,usWinDescent=380,
                 sxHeight=520,sCapHeight=710,usWeightClass=400,usWidthClass=5,fsType=0,fsSelection=0x40)
     fb.font['OS/2'].panose.bFamilyType=2;fb.font['OS/2'].panose.bProportion=9 if mono else 0
-    fb.setupPost(isFixedPitch=1 if mono else 0);fb.setupMaxp();fb.font['head'].fontRevision=3.003
+    fb.setupPost(isFixedPitch=1 if mono else 0);fb.setupMaxp();fb.font['head'].fontRevision=3.004
     from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
     feature=''
     if not mono:
@@ -1143,6 +1232,42 @@ for c in ACCENT:
     a,b=unit(BODIES[c]),unit(BODIES[parent]);overlap=a.intersection(b).area/a.union(b).area
     body_differences[c]={'parent':parent,'body_overlap':round(overlap,4),'style':LABELS[c]}
     assert overlap<.80,(c,parent,'accent body too close to parent',overlap)
-report={'version':'3.003','families':[f[0] for f in FAMILIES],'encoded_characters':len(info['cmap']),'independent_accent_bodies':len(ACCENT),'styles':LABELS,'ligatures':LIGATURES,'accent_body_comparisons':body_differences}
+
+PAIR_GROUPS=[
+    ('Angles','<>≤≥'),('Single arrows','←→↑↓↔'),('Double arrows','⇐⇒⇔'),
+    ('Equality','=≠≡≢'),('Waves','~≈'),('Parentheses','()'),
+    ('Square brackets','[]'),('Braces','{}'),('Slashes','/\\|'),
+    ('Dashes','-–—−_'),('Single quotes',"'‘’`"),('Double quotes','"“”'),
+    ('Stops','.•:;…'),('Inverted signs','!¡?¿'),('Crosses','Xx×+'),
+    ('Verticals','Il1|ij'),('Round forms','O0oQq'),('V and Y','VvYy'),
+    ('W forms','Ww'),('C and G','CcGg6'),('P and R','PpRr'),
+    ('T and I','TtIi'),('Z and 2','Zz2'),('A and U','AaUu2'),('S and B','5Ss8B'),('B and D','BbdD'),('E and F','EeFf'),
+    ('H and K','HhKk'),('J and L','JjLl'),('M and N','MmNn'),('b d p q','bdpq'),
+]
+def resemblance(a,b):
+    a,b=unit(a),unit(b)
+    mirror=scale(b,xfact=-1,yfact=1,origin=(.5,.5))
+    turned=scale(b,xfact=-1,yfact=-1,origin=(.5,.5))
+    return round(max(a.intersection(other).area/a.union(other).area for other in [b,mirror,turned]),4)
+pair_audit=[]
+for title,group in PAIR_GROUPS:
+    for i,a in enumerate(group):
+        for b in group[i+1:]:
+            pair_audit.append({'group':title,'pair':a+b,'overlap_including_mirror':resemblance(BODIES[a],BODIES[b])})
+for a in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+    pair_audit.append({'group':'Upper/lower case','pair':a+a.lower(),
+                       'overlap_including_mirror':resemblance(BODIES[a],BODIES[a.lower()])})
+ligature_audit=[]
+for i,a in enumerate(LIGATURES):
+    for b in list(LIGATURES)[i+1:]:
+        ligature_audit.append({'pair':[a,b],'overlap_including_mirror':resemblance(LIGATURE_BODIES[a],LIGATURE_BODIES[b])})
+# Catch future regressions to copied, mirrored or merely stretched ligatures.
+assert max(x['overlap_including_mirror'] for x in ligature_audit)<.9
+audit={'groups':PAIR_GROUPS,'characters':sorted(pair_audit,key=lambda x:-x['overlap_including_mirror']),
+       'ligatures':sorted(ligature_audit,key=lambda x:-x['overlap_including_mirror']),
+       'note':'Normalized outline overlap is a copy-detection aid; design contrast is reviewed visually at 40 and 76 pixels.'}
+(ROOT/'work'/'contrast-audit.json').write_text(json.dumps(audit,indent=2,ensure_ascii=False))
+
+report={'version':'3.004','families':[f[0] for f in FAMILIES],'encoded_characters':len(info['cmap']),'independent_accent_bodies':len(ACCENT),'styles':LABELS,'ligatures':LIGATURES,'ligature_styles':LIGATURE_LABELS,'accent_body_comparisons':body_differences}
 (ROOT/'work'/'font-report.json').write_text(json.dumps(report,indent=2,ensure_ascii=False))
 print(json.dumps({'families':report['families'],'characters':report['encoded_characters'],'independent_accent_bodies':len(ACCENT),'maximum_accent_parent_body_overlap':max(d['body_overlap'] for d in body_differences.values())},indent=2))

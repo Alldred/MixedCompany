@@ -24,7 +24,7 @@ Install the TTF files in your operating system, then select MixedCompany or Mixe
 
 ## Programming symbols
 
-Both fonts include 16 common ligatures:
+Both fonts include 16 independently drawn common ligatures. Each sequence has its own construction and texture; short and long arrows have separate designs:
 
 ```
 <=  >=  !=  ==  ===  !==
@@ -49,11 +49,23 @@ python -m pip install -r requirements.txt
 python src/build_fonts.py
 python src/validate_fonts.py
 python src/preview_ligatures.py
+python src/preview_pairs.py
 ```
 
 The builder regenerates both fonts, previews and the tester in outputs/. Reports and extracted tester JavaScript go in work/. The release ZIP and validation/ reports are saved snapshots.
 
 The original vector drawings live in src/build_fonts.py. No existing font outlines are used. Preview annotations use macOS Arial; adjust the ui and uib paths for other platforms.
+
+## Contrast review
+
+Version 3.004 revises 38 character designs and all 16 ligatures. The review covers 31 related-character groups and all uppercase/lowercase pairs, including angles, brackets, quotes, dashes, arrows, mirrored letters and common lookalikes.
+
+The left angle is pixelated; the right angle uses brushwork. Parentheses contrast broad ink with beads. Double arrows have slotted, half-solid and button-thread constructions. Quotes contrast curls, pixels, stripes and hollow loops. Letter-pair changes include C/c, V/v, W/w, P/p, X/x, T/I and Z/z.
+
+Proof sheets show both spacing versions at 76 and 40 px:
+[Symbols](outputs/MixedCompany-Contrast-1.png) · [Punctuation and lookalikes](outputs/MixedCompany-Contrast-2.png) · [Letters](outputs/MixedCompany-Contrast-3.png) · [More letters](outputs/MixedCompany-Contrast-4.png).
+
+[Recorded review and style assignments](validation/contrast-review.md). Normalized outline comparisons flag copied or mirrored constructions; they supplement visual judgment rather than measuring readability.
 
 ## Coverage and validation
 

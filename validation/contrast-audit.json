@@ -1,0 +1,2033 @@
+{
+  "groups": [
+    [
+      "Angles",
+      "<>≤≥"
+    ],
+    [
+      "Single arrows",
+      "←→↑↓↔"
+    ],
+    [
+      "Double arrows",
+      "⇐⇒⇔"
+    ],
+    [
+      "Equality",
+      "=≠≡≢"
+    ],
+    [
+      "Waves",
+      "~≈"
+    ],
+    [
+      "Parentheses",
+      "()"
+    ],
+    [
+      "Square brackets",
+      "[]"
+    ],
+    [
+      "Braces",
+      "{}"
+    ],
+    [
+      "Slashes",
+      "/\\|"
+    ],
+    [
+      "Dashes",
+      "-–—−_"
+    ],
+    [
+      "Single quotes",
+      "'‘’`"
+    ],
+    [
+      "Double quotes",
+      "\"“”"
+    ],
+    [
+      "Stops",
+      ".•:;…"
+    ],
+    [
+      "Inverted signs",
+      "!¡?¿"
+    ],
+    [
+      "Crosses",
+      "Xx×+"
+    ],
+    [
+      "Verticals",
+      "Il1|ij"
+    ],
+    [
+      "Round forms",
+      "O0oQq"
+    ],
+    [
+      "V and Y",
+      "VvYy"
+    ],
+    [
+      "W forms",
+      "Ww"
+    ],
+    [
+      "C and G",
+      "CcGg6"
+    ],
+    [
+      "P and R",
+      "PpRr"
+    ],
+    [
+      "T and I",
+      "TtIi"
+    ],
+    [
+      "Z and 2",
+      "Zz2"
+    ],
+    [
+      "A and U",
+      "AaUu2"
+    ],
+    [
+      "S and B",
+      "5Ss8B"
+    ],
+    [
+      "B and D",
+      "BbdD"
+    ],
+    [
+      "E and F",
+      "EeFf"
+    ],
+    [
+      "H and K",
+      "HhKk"
+    ],
+    [
+      "J and L",
+      "JjLl"
+    ],
+    [
+      "M and N",
+      "MmNn"
+    ],
+    [
+      "b d p q",
+      "bdpq"
+    ]
+  ],
+  "characters": [
+    {
+      "group": "Dashes",
+      "pair": "-–",
+      "overlap_including_mirror": 0.743
+    },
+    {
+      "group": "Dashes",
+      "pair": "–−",
+      "overlap_including_mirror": 0.6877
+    },
+    {
+      "group": "Dashes",
+      "pair": "-_",
+      "overlap_including_mirror": 0.6846
+    },
+    {
+      "group": "Angles",
+      "pair": "<>",
+      "overlap_including_mirror": 0.6577
+    },
+    {
+      "group": "Stops",
+      "pair": ".•",
+      "overlap_including_mirror": 0.6407
+    },
+    {
+      "group": "Dashes",
+      "pair": "-−",
+      "overlap_including_mirror": 0.6406
+    },
+    {
+      "group": "T and I",
+      "pair": "TI",
+      "overlap_including_mirror": 0.617
+    },
+    {
+      "group": "Dashes",
+      "pair": "–_",
+      "overlap_including_mirror": 0.6082
+    },
+    {
+      "group": "Dashes",
+      "pair": "-—",
+      "overlap_including_mirror": 0.6012
+    },
+    {
+      "group": "Round forms",
+      "pair": "Oo",
+      "overlap_including_mirror": 0.5983
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Oo",
+      "overlap_including_mirror": 0.5983
+    },
+    {
+      "group": "C and G",
+      "pair": "Cc",
+      "overlap_including_mirror": 0.572
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Cc",
+      "overlap_including_mirror": 0.572
+    },
+    {
+      "group": "Dashes",
+      "pair": "−_",
+      "overlap_including_mirror": 0.5386
+    },
+    {
+      "group": "Double arrows",
+      "pair": "⇐⇒",
+      "overlap_including_mirror": 0.5267
+    },
+    {
+      "group": "B and D",
+      "pair": "BD",
+      "overlap_including_mirror": 0.5208
+    },
+    {
+      "group": "Parentheses",
+      "pair": "()",
+      "overlap_including_mirror": 0.5105
+    },
+    {
+      "group": "Single quotes",
+      "pair": "'`",
+      "overlap_including_mirror": 0.5101
+    },
+    {
+      "group": "A and U",
+      "pair": "Au",
+      "overlap_including_mirror": 0.5002
+    },
+    {
+      "group": "Single quotes",
+      "pair": "'’",
+      "overlap_including_mirror": 0.4766
+    },
+    {
+      "group": "b d p q",
+      "pair": "bq",
+      "overlap_including_mirror": 0.4745
+    },
+    {
+      "group": "C and G",
+      "pair": "cG",
+      "overlap_including_mirror": 0.4733
+    },
+    {
+      "group": "b d p q",
+      "pair": "pq",
+      "overlap_including_mirror": 0.466
+    },
+    {
+      "group": "Dashes",
+      "pair": "–—",
+      "overlap_including_mirror": 0.4606
+    },
+    {
+      "group": "S and B",
+      "pair": "5B",
+      "overlap_including_mirror": 0.4574
+    },
+    {
+      "group": "C and G",
+      "pair": "CG",
+      "overlap_including_mirror": 0.448
+    },
+    {
+      "group": "Round forms",
+      "pair": "oq",
+      "overlap_including_mirror": 0.4462
+    },
+    {
+      "group": "B and D",
+      "pair": "bd",
+      "overlap_including_mirror": 0.4412
+    },
+    {
+      "group": "b d p q",
+      "pair": "bd",
+      "overlap_including_mirror": 0.4412
+    },
+    {
+      "group": "Dashes",
+      "pair": "—_",
+      "overlap_including_mirror": 0.4356
+    },
+    {
+      "group": "b d p q",
+      "pair": "bp",
+      "overlap_including_mirror": 0.4307
+    },
+    {
+      "group": "E and F",
+      "pair": "Ee",
+      "overlap_including_mirror": 0.4306
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Ee",
+      "overlap_including_mirror": 0.4306
+    },
+    {
+      "group": "Dashes",
+      "pair": "—−",
+      "overlap_including_mirror": 0.4286
+    },
+    {
+      "group": "b d p q",
+      "pair": "dp",
+      "overlap_including_mirror": 0.4285
+    },
+    {
+      "group": "Single quotes",
+      "pair": "’`",
+      "overlap_including_mirror": 0.426
+    },
+    {
+      "group": "A and U",
+      "pair": "a2",
+      "overlap_including_mirror": 0.4238
+    },
+    {
+      "group": "Single arrows",
+      "pair": "←↔",
+      "overlap_including_mirror": 0.4211
+    },
+    {
+      "group": "Braces",
+      "pair": "{}",
+      "overlap_including_mirror": 0.4168
+    },
+    {
+      "group": "T and I",
+      "pair": "ti",
+      "overlap_including_mirror": 0.4168
+    },
+    {
+      "group": "Double arrows",
+      "pair": "⇐⇔",
+      "overlap_including_mirror": 0.4137
+    },
+    {
+      "group": "Round forms",
+      "pair": "Oq",
+      "overlap_including_mirror": 0.4131
+    },
+    {
+      "group": "J and L",
+      "pair": "JL",
+      "overlap_including_mirror": 0.4104
+    },
+    {
+      "group": "Verticals",
+      "pair": "I1",
+      "overlap_including_mirror": 0.4081
+    },
+    {
+      "group": "B and D",
+      "pair": "bD",
+      "overlap_including_mirror": 0.4077
+    },
+    {
+      "group": "Single arrows",
+      "pair": "←→",
+      "overlap_including_mirror": 0.4051
+    },
+    {
+      "group": "Z and 2",
+      "pair": "z2",
+      "overlap_including_mirror": 0.4041
+    },
+    {
+      "group": "b d p q",
+      "pair": "dq",
+      "overlap_including_mirror": 0.3999
+    },
+    {
+      "group": "A and U",
+      "pair": "au",
+      "overlap_including_mirror": 0.3945
+    },
+    {
+      "group": "Verticals",
+      "pair": "1i",
+      "overlap_including_mirror": 0.3922
+    },
+    {
+      "group": "Z and 2",
+      "pair": "Zz",
+      "overlap_including_mirror": 0.3911
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Zz",
+      "overlap_including_mirror": 0.3911
+    },
+    {
+      "group": "Slashes",
+      "pair": "/\\",
+      "overlap_including_mirror": 0.3904
+    },
+    {
+      "group": "T and I",
+      "pair": "Ti",
+      "overlap_including_mirror": 0.3902
+    },
+    {
+      "group": "Verticals",
+      "pair": "Ii",
+      "overlap_including_mirror": 0.3885
+    },
+    {
+      "group": "T and I",
+      "pair": "Ii",
+      "overlap_including_mirror": 0.3885
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Ii",
+      "overlap_including_mirror": 0.3885
+    },
+    {
+      "group": "Inverted signs",
+      "pair": "!¡",
+      "overlap_including_mirror": 0.3864
+    },
+    {
+      "group": "B and D",
+      "pair": "Bb",
+      "overlap_including_mirror": 0.3835
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Bb",
+      "overlap_including_mirror": 0.3835
+    },
+    {
+      "group": "Double quotes",
+      "pair": "\"“",
+      "overlap_including_mirror": 0.3773
+    },
+    {
+      "group": "C and G",
+      "pair": "C6",
+      "overlap_including_mirror": 0.3738
+    },
+    {
+      "group": "S and B",
+      "pair": "8B",
+      "overlap_including_mirror": 0.371
+    },
+    {
+      "group": "C and G",
+      "pair": "G6",
+      "overlap_including_mirror": 0.37
+    },
+    {
+      "group": "Inverted signs",
+      "pair": "!?",
+      "overlap_including_mirror": 0.3624
+    },
+    {
+      "group": "Crosses",
+      "pair": "X×",
+      "overlap_including_mirror": 0.3579
+    },
+    {
+      "group": "T and I",
+      "pair": "tI",
+      "overlap_including_mirror": 0.3573
+    },
+    {
+      "group": "C and G",
+      "pair": "Cg",
+      "overlap_including_mirror": 0.3565
+    },
+    {
+      "group": "J and L",
+      "pair": "Jl",
+      "overlap_including_mirror": 0.3492
+    },
+    {
+      "group": "J and L",
+      "pair": "Jj",
+      "overlap_including_mirror": 0.3454
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Jj",
+      "overlap_including_mirror": 0.3454
+    },
+    {
+      "group": "Angles",
+      "pair": "<≥",
+      "overlap_including_mirror": 0.3337
+    },
+    {
+      "group": "P and R",
+      "pair": "Pp",
+      "overlap_including_mirror": 0.3337
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Pp",
+      "overlap_including_mirror": 0.3337
+    },
+    {
+      "group": "B and D",
+      "pair": "dD",
+      "overlap_including_mirror": 0.3294
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Dd",
+      "overlap_including_mirror": 0.3294
+    },
+    {
+      "group": "Stops",
+      "pair": ":;",
+      "overlap_including_mirror": 0.3293
+    },
+    {
+      "group": "A and U",
+      "pair": "Aa",
+      "overlap_including_mirror": 0.3264
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Aa",
+      "overlap_including_mirror": 0.3264
+    },
+    {
+      "group": "B and D",
+      "pair": "Bd",
+      "overlap_including_mirror": 0.3252
+    },
+    {
+      "group": "P and R",
+      "pair": "pR",
+      "overlap_including_mirror": 0.3221
+    },
+    {
+      "group": "V and Y",
+      "pair": "Vv",
+      "overlap_including_mirror": 0.3204
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Vv",
+      "overlap_including_mirror": 0.3204
+    },
+    {
+      "group": "P and R",
+      "pair": "pr",
+      "overlap_including_mirror": 0.3189
+    },
+    {
+      "group": "Waves",
+      "pair": "~≈",
+      "overlap_including_mirror": 0.3188
+    },
+    {
+      "group": "Round forms",
+      "pair": "Qq",
+      "overlap_including_mirror": 0.3185
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Qq",
+      "overlap_including_mirror": 0.3185
+    },
+    {
+      "group": "Round forms",
+      "pair": "O0",
+      "overlap_including_mirror": 0.3175
+    },
+    {
+      "group": "Inverted signs",
+      "pair": "?¿",
+      "overlap_including_mirror": 0.3168
+    },
+    {
+      "group": "V and Y",
+      "pair": "Vy",
+      "overlap_including_mirror": 0.3147
+    },
+    {
+      "group": "T and I",
+      "pair": "Tt",
+      "overlap_including_mirror": 0.3141
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Tt",
+      "overlap_including_mirror": 0.3141
+    },
+    {
+      "group": "C and G",
+      "pair": "Gg",
+      "overlap_including_mirror": 0.3136
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Gg",
+      "overlap_including_mirror": 0.3136
+    },
+    {
+      "group": "Angles",
+      "pair": ">≥",
+      "overlap_including_mirror": 0.3134
+    },
+    {
+      "group": "E and F",
+      "pair": "EF",
+      "overlap_including_mirror": 0.3116
+    },
+    {
+      "group": "Square brackets",
+      "pair": "[]",
+      "overlap_including_mirror": 0.3112
+    },
+    {
+      "group": "A and U",
+      "pair": "U2",
+      "overlap_including_mirror": 0.305
+    },
+    {
+      "group": "P and R",
+      "pair": "Rr",
+      "overlap_including_mirror": 0.3027
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Rr",
+      "overlap_including_mirror": 0.3027
+    },
+    {
+      "group": "Round forms",
+      "pair": "oQ",
+      "overlap_including_mirror": 0.3016
+    },
+    {
+      "group": "V and Y",
+      "pair": "Yy",
+      "overlap_including_mirror": 0.3015
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Yy",
+      "overlap_including_mirror": 0.3015
+    },
+    {
+      "group": "J and L",
+      "pair": "jL",
+      "overlap_including_mirror": 0.2971
+    },
+    {
+      "group": "Double arrows",
+      "pair": "⇒⇔",
+      "overlap_including_mirror": 0.2946
+    },
+    {
+      "group": "A and U",
+      "pair": "aU",
+      "overlap_including_mirror": 0.2927
+    },
+    {
+      "group": "Round forms",
+      "pair": "0q",
+      "overlap_including_mirror": 0.2909
+    },
+    {
+      "group": "Single arrows",
+      "pair": "→↔",
+      "overlap_including_mirror": 0.2895
+    },
+    {
+      "group": "C and G",
+      "pair": "c6",
+      "overlap_including_mirror": 0.2848
+    },
+    {
+      "group": "H and K",
+      "pair": "HK",
+      "overlap_including_mirror": 0.2817
+    },
+    {
+      "group": "C and G",
+      "pair": "cg",
+      "overlap_including_mirror": 0.2768
+    },
+    {
+      "group": "H and K",
+      "pair": "hK",
+      "overlap_including_mirror": 0.2764
+    },
+    {
+      "group": "Verticals",
+      "pair": "lj",
+      "overlap_including_mirror": 0.2762
+    },
+    {
+      "group": "J and L",
+      "pair": "jl",
+      "overlap_including_mirror": 0.2762
+    },
+    {
+      "group": "Verticals",
+      "pair": "|j",
+      "overlap_including_mirror": 0.2753
+    },
+    {
+      "group": "Round forms",
+      "pair": "OQ",
+      "overlap_including_mirror": 0.2718
+    },
+    {
+      "group": "Verticals",
+      "pair": "l|",
+      "overlap_including_mirror": 0.271
+    },
+    {
+      "group": "Single quotes",
+      "pair": "‘’",
+      "overlap_including_mirror": 0.2697
+    },
+    {
+      "group": "Angles",
+      "pair": "≤≥",
+      "overlap_including_mirror": 0.2663
+    },
+    {
+      "group": "H and K",
+      "pair": "Hh",
+      "overlap_including_mirror": 0.2653
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Hh",
+      "overlap_including_mirror": 0.2653
+    },
+    {
+      "group": "Double quotes",
+      "pair": "“”",
+      "overlap_including_mirror": 0.265
+    },
+    {
+      "group": "M and N",
+      "pair": "Mm",
+      "overlap_including_mirror": 0.2649
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Mm",
+      "overlap_including_mirror": 0.2649
+    },
+    {
+      "group": "C and G",
+      "pair": "g6",
+      "overlap_including_mirror": 0.2622
+    },
+    {
+      "group": "Crosses",
+      "pair": "Xx",
+      "overlap_including_mirror": 0.261
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Xx",
+      "overlap_including_mirror": 0.261
+    },
+    {
+      "group": "Crosses",
+      "pair": "x×",
+      "overlap_including_mirror": 0.2578
+    },
+    {
+      "group": "P and R",
+      "pair": "PR",
+      "overlap_including_mirror": 0.2555
+    },
+    {
+      "group": "Round forms",
+      "pair": "0o",
+      "overlap_including_mirror": 0.252
+    },
+    {
+      "group": "Equality",
+      "pair": "=≢",
+      "overlap_including_mirror": 0.2512
+    },
+    {
+      "group": "Angles",
+      "pair": ">≤",
+      "overlap_including_mirror": 0.2504
+    },
+    {
+      "group": "M and N",
+      "pair": "Mn",
+      "overlap_including_mirror": 0.2458
+    },
+    {
+      "group": "S and B",
+      "pair": "58",
+      "overlap_including_mirror": 0.2446
+    },
+    {
+      "group": "A and U",
+      "pair": "A2",
+      "overlap_including_mirror": 0.2404
+    },
+    {
+      "group": "Inverted signs",
+      "pair": "¡?",
+      "overlap_including_mirror": 0.2389
+    },
+    {
+      "group": "J and L",
+      "pair": "Ll",
+      "overlap_including_mirror": 0.2371
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Ll",
+      "overlap_including_mirror": 0.2371
+    },
+    {
+      "group": "Stops",
+      "pair": "•;",
+      "overlap_including_mirror": 0.2358
+    },
+    {
+      "group": "A and U",
+      "pair": "u2",
+      "overlap_including_mirror": 0.2357
+    },
+    {
+      "group": "Equality",
+      "pair": "=≡",
+      "overlap_including_mirror": 0.2269
+    },
+    {
+      "group": "A and U",
+      "pair": "Uu",
+      "overlap_including_mirror": 0.2258
+    },
+    {
+      "group": "M and N",
+      "pair": "mn",
+      "overlap_including_mirror": 0.2258
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Uu",
+      "overlap_including_mirror": 0.2258
+    },
+    {
+      "group": "S and B",
+      "pair": "Ss",
+      "overlap_including_mirror": 0.2235
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Ss",
+      "overlap_including_mirror": 0.2235
+    },
+    {
+      "group": "Equality",
+      "pair": "≠≢",
+      "overlap_including_mirror": 0.2219
+    },
+    {
+      "group": "V and Y",
+      "pair": "vy",
+      "overlap_including_mirror": 0.2216
+    },
+    {
+      "group": "V and Y",
+      "pair": "VY",
+      "overlap_including_mirror": 0.2191
+    },
+    {
+      "group": "Z and 2",
+      "pair": "Z2",
+      "overlap_including_mirror": 0.2184
+    },
+    {
+      "group": "H and K",
+      "pair": "hk",
+      "overlap_including_mirror": 0.2169
+    },
+    {
+      "group": "Inverted signs",
+      "pair": "!¿",
+      "overlap_including_mirror": 0.2153
+    },
+    {
+      "group": "Verticals",
+      "pair": "Il",
+      "overlap_including_mirror": 0.2103
+    },
+    {
+      "group": "S and B",
+      "pair": "5S",
+      "overlap_including_mirror": 0.2088
+    },
+    {
+      "group": "M and N",
+      "pair": "MN",
+      "overlap_including_mirror": 0.2072
+    },
+    {
+      "group": "Stops",
+      "pair": "•…",
+      "overlap_including_mirror": 0.2071
+    },
+    {
+      "group": "S and B",
+      "pair": "5s",
+      "overlap_including_mirror": 0.1958
+    },
+    {
+      "group": "H and K",
+      "pair": "Kk",
+      "overlap_including_mirror": 0.1949
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Kk",
+      "overlap_including_mirror": 0.1949
+    },
+    {
+      "group": "S and B",
+      "pair": "SB",
+      "overlap_including_mirror": 0.1914
+    },
+    {
+      "group": "Single quotes",
+      "pair": "'‘",
+      "overlap_including_mirror": 0.1895
+    },
+    {
+      "group": "Stops",
+      "pair": ".…",
+      "overlap_including_mirror": 0.1863
+    },
+    {
+      "group": "Stops",
+      "pair": "•:",
+      "overlap_including_mirror": 0.1795
+    },
+    {
+      "group": "Single quotes",
+      "pair": "‘`",
+      "overlap_including_mirror": 0.1789
+    },
+    {
+      "group": "Angles",
+      "pair": "<≤",
+      "overlap_including_mirror": 0.1782
+    },
+    {
+      "group": "E and F",
+      "pair": "eF",
+      "overlap_including_mirror": 0.1762
+    },
+    {
+      "group": "V and Y",
+      "pair": "vY",
+      "overlap_including_mirror": 0.1747
+    },
+    {
+      "group": "P and R",
+      "pair": "Pr",
+      "overlap_including_mirror": 0.1732
+    },
+    {
+      "group": "Stops",
+      "pair": ":…",
+      "overlap_including_mirror": 0.1729
+    },
+    {
+      "group": "Stops",
+      "pair": ".;",
+      "overlap_including_mirror": 0.1715
+    },
+    {
+      "group": "W forms",
+      "pair": "Ww",
+      "overlap_including_mirror": 0.1658
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Ww",
+      "overlap_including_mirror": 0.1658
+    },
+    {
+      "group": "Round forms",
+      "pair": "0Q",
+      "overlap_including_mirror": 0.1656
+    },
+    {
+      "group": "Stops",
+      "pair": ";…",
+      "overlap_including_mirror": 0.163
+    },
+    {
+      "group": "Verticals",
+      "pair": "li",
+      "overlap_including_mirror": 0.1628
+    },
+    {
+      "group": "Single arrows",
+      "pair": "↑↓",
+      "overlap_including_mirror": 0.1611
+    },
+    {
+      "group": "Double quotes",
+      "pair": "\"”",
+      "overlap_including_mirror": 0.1571
+    },
+    {
+      "group": "Inverted signs",
+      "pair": "¡¿",
+      "overlap_including_mirror": 0.1513
+    },
+    {
+      "group": "A and U",
+      "pair": "AU",
+      "overlap_including_mirror": 0.1483
+    },
+    {
+      "group": "S and B",
+      "pair": "sB",
+      "overlap_including_mirror": 0.1482
+    },
+    {
+      "group": "Equality",
+      "pair": "≡≢",
+      "overlap_including_mirror": 0.1461
+    },
+    {
+      "group": "Verticals",
+      "pair": "l1",
+      "overlap_including_mirror": 0.1424
+    },
+    {
+      "group": "Verticals",
+      "pair": "I|",
+      "overlap_including_mirror": 0.1411
+    },
+    {
+      "group": "Verticals",
+      "pair": "Ij",
+      "overlap_including_mirror": 0.1325
+    },
+    {
+      "group": "E and F",
+      "pair": "Ef",
+      "overlap_including_mirror": 0.1148
+    },
+    {
+      "group": "Single arrows",
+      "pair": "←↓",
+      "overlap_including_mirror": 0.1145
+    },
+    {
+      "group": "H and K",
+      "pair": "Hk",
+      "overlap_including_mirror": 0.1104
+    },
+    {
+      "group": "Single arrows",
+      "pair": "←↑",
+      "overlap_including_mirror": 0.1103
+    },
+    {
+      "group": "M and N",
+      "pair": "Nn",
+      "overlap_including_mirror": 0.1064
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Nn",
+      "overlap_including_mirror": 0.1064
+    },
+    {
+      "group": "Single arrows",
+      "pair": "→↑",
+      "overlap_including_mirror": 0.1046
+    },
+    {
+      "group": "Crosses",
+      "pair": "X+",
+      "overlap_including_mirror": 0.1027
+    },
+    {
+      "group": "Single arrows",
+      "pair": "→↓",
+      "overlap_including_mirror": 0.099
+    },
+    {
+      "group": "Crosses",
+      "pair": "×+",
+      "overlap_including_mirror": 0.0968
+    },
+    {
+      "group": "Slashes",
+      "pair": "\\|",
+      "overlap_including_mirror": 0.0959
+    },
+    {
+      "group": "E and F",
+      "pair": "Ff",
+      "overlap_including_mirror": 0.0951
+    },
+    {
+      "group": "Upper/lower case",
+      "pair": "Ff",
+      "overlap_including_mirror": 0.0951
+    },
+    {
+      "group": "S and B",
+      "pair": "s8",
+      "overlap_including_mirror": 0.0927
+    },
+    {
+      "group": "Verticals",
+      "pair": "1j",
+      "overlap_including_mirror": 0.0917
+    },
+    {
+      "group": "E and F",
+      "pair": "ef",
+      "overlap_including_mirror": 0.0854
+    },
+    {
+      "group": "Slashes",
+      "pair": "/|",
+      "overlap_including_mirror": 0.0845
+    },
+    {
+      "group": "Equality",
+      "pair": "=≠",
+      "overlap_including_mirror": 0.0827
+    },
+    {
+      "group": "Single arrows",
+      "pair": "↓↔",
+      "overlap_including_mirror": 0.0822
+    },
+    {
+      "group": "Crosses",
+      "pair": "x+",
+      "overlap_including_mirror": 0.0799
+    },
+    {
+      "group": "Verticals",
+      "pair": "ij",
+      "overlap_including_mirror": 0.0756
+    },
+    {
+      "group": "Stops",
+      "pair": ".:",
+      "overlap_including_mirror": 0.0714
+    },
+    {
+      "group": "S and B",
+      "pair": "S8",
+      "overlap_including_mirror": 0.0676
+    },
+    {
+      "group": "Single arrows",
+      "pair": "↑↔",
+      "overlap_including_mirror": 0.0653
+    },
+    {
+      "group": "M and N",
+      "pair": "mN",
+      "overlap_including_mirror": 0.0617
+    },
+    {
+      "group": "Verticals",
+      "pair": "1|",
+      "overlap_including_mirror": 0.0535
+    },
+    {
+      "group": "Verticals",
+      "pair": "|i",
+      "overlap_including_mirror": 0.0499
+    },
+    {
+      "group": "Equality",
+      "pair": "≠≡",
+      "overlap_including_mirror": 0.0455
+    }
+  ],
+  "ligatures": [
+    {
+      "pair": [
+        "<--",
+        "-->"
+      ],
+      "overlap_including_mirror": 0.6783
+    },
+    {
+      "pair": [
+        "->",
+        "<--"
+      ],
+      "overlap_including_mirror": 0.5981
+    },
+    {
+      "pair": [
+        "->",
+        "-->"
+      ],
+      "overlap_including_mirror": 0.5212
+    },
+    {
+      "pair": [
+        "=>",
+        "<=="
+      ],
+      "overlap_including_mirror": 0.4791
+    },
+    {
+      "pair": [
+        "<=",
+        ">="
+      ],
+      "overlap_including_mirror": 0.4315
+    },
+    {
+      "pair": [
+        "<==",
+        "==>"
+      ],
+      "overlap_including_mirror": 0.4108
+    },
+    {
+      "pair": [
+        "<-",
+        "<--"
+      ],
+      "overlap_including_mirror": 0.4018
+    },
+    {
+      "pair": [
+        "!=",
+        "<=="
+      ],
+      "overlap_including_mirror": 0.3822
+    },
+    {
+      "pair": [
+        "<-",
+        "-->"
+      ],
+      "overlap_including_mirror": 0.3816
+    },
+    {
+      "pair": [
+        "<=",
+        "==="
+      ],
+      "overlap_including_mirror": 0.3758
+    },
+    {
+      "pair": [
+        "<->",
+        "<--"
+      ],
+      "overlap_including_mirror": 0.3608
+    },
+    {
+      "pair": [
+        "=>",
+        "==>"
+      ],
+      "overlap_including_mirror": 0.3344
+    },
+    {
+      "pair": [
+        "<-",
+        "->"
+      ],
+      "overlap_including_mirror": 0.3295
+    },
+    {
+      "pair": [
+        "!=",
+        "=>"
+      ],
+      "overlap_including_mirror": 0.3159
+    },
+    {
+      "pair": [
+        "=>",
+        "-->"
+      ],
+      "overlap_including_mirror": 0.3149
+    },
+    {
+      "pair": [
+        "->",
+        "<->"
+      ],
+      "overlap_including_mirror": 0.3132
+    },
+    {
+      "pair": [
+        "==",
+        "==="
+      ],
+      "overlap_including_mirror": 0.3129
+    },
+    {
+      "pair": [
+        "!=",
+        "==>"
+      ],
+      "overlap_including_mirror": 0.3053
+    },
+    {
+      "pair": [
+        "===",
+        "<--"
+      ],
+      "overlap_including_mirror": 0.297
+    },
+    {
+      "pair": [
+        "-->",
+        "<=="
+      ],
+      "overlap_including_mirror": 0.2941
+    },
+    {
+      "pair": [
+        "<->",
+        "-->"
+      ],
+      "overlap_including_mirror": 0.2877
+    },
+    {
+      "pair": [
+        "<=",
+        "=="
+      ],
+      "overlap_including_mirror": 0.2867
+    },
+    {
+      "pair": [
+        "<--",
+        "<=="
+      ],
+      "overlap_including_mirror": 0.2782
+    },
+    {
+      "pair": [
+        "!==",
+        "<--"
+      ],
+      "overlap_including_mirror": 0.2743
+    },
+    {
+      "pair": [
+        "!=",
+        "=="
+      ],
+      "overlap_including_mirror": 0.2738
+    },
+    {
+      "pair": [
+        "===",
+        "-->"
+      ],
+      "overlap_including_mirror": 0.2606
+    },
+    {
+      "pair": [
+        "=>",
+        "<--"
+      ],
+      "overlap_including_mirror": 0.2567
+    },
+    {
+      "pair": [
+        "<=",
+        "<--"
+      ],
+      "overlap_including_mirror": 0.2553
+    },
+    {
+      "pair": [
+        "==",
+        "!=="
+      ],
+      "overlap_including_mirror": 0.246
+    },
+    {
+      "pair": [
+        "<=",
+        "!="
+      ],
+      "overlap_including_mirror": 0.2417
+    },
+    {
+      "pair": [
+        "!==",
+        "-->"
+      ],
+      "overlap_including_mirror": 0.2395
+    },
+    {
+      "pair": [
+        "!=",
+        "!=="
+      ],
+      "overlap_including_mirror": 0.2375
+    },
+    {
+      "pair": [
+        "===",
+        "->"
+      ],
+      "overlap_including_mirror": 0.2339
+    },
+    {
+      "pair": [
+        "<=",
+        "-->"
+      ],
+      "overlap_including_mirror": 0.2255
+    },
+    {
+      "pair": [
+        "!==",
+        "<-"
+      ],
+      "overlap_including_mirror": 0.2222
+    },
+    {
+      "pair": [
+        "===",
+        "<->"
+      ],
+      "overlap_including_mirror": 0.2155
+    },
+    {
+      "pair": [
+        "->",
+        "<=="
+      ],
+      "overlap_including_mirror": 0.2132
+    },
+    {
+      "pair": [
+        "<--",
+        "==>"
+      ],
+      "overlap_including_mirror": 0.2111
+    },
+    {
+      "pair": [
+        "<=",
+        "<=="
+      ],
+      "overlap_including_mirror": 0.2079
+    },
+    {
+      "pair": [
+        "===",
+        "<-"
+      ],
+      "overlap_including_mirror": 0.2072
+    },
+    {
+      "pair": [
+        "!==",
+        "->"
+      ],
+      "overlap_including_mirror": 0.2072
+    },
+    {
+      "pair": [
+        ">=",
+        "=="
+      ],
+      "overlap_including_mirror": 0.206
+    },
+    {
+      "pair": [
+        ">=",
+        "==="
+      ],
+      "overlap_including_mirror": 0.2053
+    },
+    {
+      "pair": [
+        "<-",
+        "<->"
+      ],
+      "overlap_including_mirror": 0.2051
+    },
+    {
+      "pair": [
+        "!=",
+        "-->"
+      ],
+      "overlap_including_mirror": 0.1991
+    },
+    {
+      "pair": [
+        "<=",
+        "->"
+      ],
+      "overlap_including_mirror": 0.1964
+    },
+    {
+      "pair": [
+        "<=",
+        "!=="
+      ],
+      "overlap_including_mirror": 0.1945
+    },
+    {
+      "pair": [
+        "<=",
+        "=>"
+      ],
+      "overlap_including_mirror": 0.194
+    },
+    {
+      "pair": [
+        "-->",
+        "==>"
+      ],
+      "overlap_including_mirror": 0.1909
+    },
+    {
+      "pair": [
+        "<=",
+        "<->"
+      ],
+      "overlap_including_mirror": 0.1897
+    },
+    {
+      "pair": [
+        "!=",
+        "<--"
+      ],
+      "overlap_including_mirror": 0.188
+    },
+    {
+      "pair": [
+        "===",
+        "!=="
+      ],
+      "overlap_including_mirror": 0.1854
+    },
+    {
+      "pair": [
+        "->",
+        "=>"
+      ],
+      "overlap_including_mirror": 0.1828
+    },
+    {
+      "pair": [
+        "!==",
+        "<->"
+      ],
+      "overlap_including_mirror": 0.1728
+    },
+    {
+      "pair": [
+        "<->",
+        "<=="
+      ],
+      "overlap_including_mirror": 0.1657
+    },
+    {
+      "pair": [
+        "<=",
+        "~="
+      ],
+      "overlap_including_mirror": 0.1651
+    },
+    {
+      "pair": [
+        ">=",
+        "!="
+      ],
+      "overlap_including_mirror": 0.1619
+    },
+    {
+      "pair": [
+        ">=",
+        "-->"
+      ],
+      "overlap_including_mirror": 0.1617
+    },
+    {
+      "pair": [
+        "->",
+        "==>"
+      ],
+      "overlap_including_mirror": 0.1611
+    },
+    {
+      "pair": [
+        "<=>",
+        "<=="
+      ],
+      "overlap_including_mirror": 0.1599
+    },
+    {
+      "pair": [
+        "=>",
+        "<=>"
+      ],
+      "overlap_including_mirror": 0.1581
+    },
+    {
+      "pair": [
+        "<-",
+        "=>"
+      ],
+      "overlap_including_mirror": 0.158
+    },
+    {
+      "pair": [
+        ">=",
+        "<--"
+      ],
+      "overlap_including_mirror": 0.153
+    },
+    {
+      "pair": [
+        "==",
+        "~="
+      ],
+      "overlap_including_mirror": 0.1513
+    },
+    {
+      "pair": [
+        "!=",
+        "<=>"
+      ],
+      "overlap_including_mirror": 0.1493
+    },
+    {
+      "pair": [
+        "!=",
+        "->"
+      ],
+      "overlap_including_mirror": 0.1455
+    },
+    {
+      "pair": [
+        "==",
+        "<=="
+      ],
+      "overlap_including_mirror": 0.1436
+    },
+    {
+      "pair": [
+        "<-",
+        "<=="
+      ],
+      "overlap_including_mirror": 0.143
+    },
+    {
+      "pair": [
+        "!=",
+        "~="
+      ],
+      "overlap_including_mirror": 0.1411
+    },
+    {
+      "pair": [
+        "!=",
+        "<->"
+      ],
+      "overlap_including_mirror": 0.1347
+    },
+    {
+      "pair": [
+        "<=",
+        "==>"
+      ],
+      "overlap_including_mirror": 0.1346
+    },
+    {
+      "pair": [
+        "<->",
+        "=>"
+      ],
+      "overlap_including_mirror": 0.1343
+    },
+    {
+      "pair": [
+        ">=",
+        "~="
+      ],
+      "overlap_including_mirror": 0.1339
+    },
+    {
+      "pair": [
+        "<=",
+        "<-"
+      ],
+      "overlap_including_mirror": 0.1332
+    },
+    {
+      "pair": [
+        "<=>",
+        "-->"
+      ],
+      "overlap_including_mirror": 0.1329
+    },
+    {
+      "pair": [
+        "!==",
+        "<=="
+      ],
+      "overlap_including_mirror": 0.1323
+    },
+    {
+      "pair": [
+        "!==",
+        "=>"
+      ],
+      "overlap_including_mirror": 0.1316
+    },
+    {
+      "pair": [
+        ">=",
+        "->"
+      ],
+      "overlap_including_mirror": 0.1282
+    },
+    {
+      "pair": [
+        "==",
+        "<--"
+      ],
+      "overlap_including_mirror": 0.1268
+    },
+    {
+      "pair": [
+        ">=",
+        "<=="
+      ],
+      "overlap_including_mirror": 0.1259
+    },
+    {
+      "pair": [
+        "==",
+        "<=>"
+      ],
+      "overlap_including_mirror": 0.1258
+    },
+    {
+      "pair": [
+        "<->",
+        "<=>"
+      ],
+      "overlap_including_mirror": 0.1252
+    },
+    {
+      "pair": [
+        "==",
+        "<->"
+      ],
+      "overlap_including_mirror": 0.1195
+    },
+    {
+      "pair": [
+        "<=>",
+        "<--"
+      ],
+      "overlap_including_mirror": 0.117
+    },
+    {
+      "pair": [
+        ">=",
+        "<->"
+      ],
+      "overlap_including_mirror": 0.116
+    },
+    {
+      "pair": [
+        "<=",
+        "<=>"
+      ],
+      "overlap_including_mirror": 0.1159
+    },
+    {
+      "pair": [
+        "<->",
+        "==>"
+      ],
+      "overlap_including_mirror": 0.1125
+    },
+    {
+      "pair": [
+        ">=",
+        "!=="
+      ],
+      "overlap_including_mirror": 0.1123
+    },
+    {
+      "pair": [
+        ">=",
+        "==>"
+      ],
+      "overlap_including_mirror": 0.1123
+    },
+    {
+      "pair": [
+        "==",
+        "==>"
+      ],
+      "overlap_including_mirror": 0.1123
+    },
+    {
+      "pair": [
+        ">=",
+        "=>"
+      ],
+      "overlap_including_mirror": 0.1055
+    },
+    {
+      "pair": [
+        "<-",
+        "==>"
+      ],
+      "overlap_including_mirror": 0.1046
+    },
+    {
+      "pair": [
+        "==>",
+        "~="
+      ],
+      "overlap_including_mirror": 0.1032
+    },
+    {
+      "pair": [
+        "->",
+        "<=>"
+      ],
+      "overlap_including_mirror": 0.1012
+    },
+    {
+      "pair": [
+        "==",
+        "-->"
+      ],
+      "overlap_including_mirror": 0.1001
+    },
+    {
+      "pair": [
+        "<==",
+        "~="
+      ],
+      "overlap_including_mirror": 0.0976
+    },
+    {
+      "pair": [
+        "==",
+        "->"
+      ],
+      "overlap_including_mirror": 0.0968
+    },
+    {
+      "pair": [
+        "!=",
+        "==="
+      ],
+      "overlap_including_mirror": 0.0954
+    },
+    {
+      "pair": [
+        "!=",
+        "<-"
+      ],
+      "overlap_including_mirror": 0.0937
+    },
+    {
+      "pair": [
+        "=>",
+        "~="
+      ],
+      "overlap_including_mirror": 0.0934
+    },
+    {
+      "pair": [
+        "==",
+        "=>"
+      ],
+      "overlap_including_mirror": 0.0925
+    },
+    {
+      "pair": [
+        ">=",
+        "<-"
+      ],
+      "overlap_including_mirror": 0.092
+    },
+    {
+      "pair": [
+        "!==",
+        "<=>"
+      ],
+      "overlap_including_mirror": 0.087
+    },
+    {
+      "pair": [
+        "===",
+        "<=="
+      ],
+      "overlap_including_mirror": 0.0864
+    },
+    {
+      "pair": [
+        "!==",
+        "~="
+      ],
+      "overlap_including_mirror": 0.0855
+    },
+    {
+      "pair": [
+        "===",
+        "~="
+      ],
+      "overlap_including_mirror": 0.0843
+    },
+    {
+      "pair": [
+        "===",
+        "=>"
+      ],
+      "overlap_including_mirror": 0.0819
+    },
+    {
+      "pair": [
+        "<=>",
+        "==>"
+      ],
+      "overlap_including_mirror": 0.0805
+    },
+    {
+      "pair": [
+        "===",
+        "<=>"
+      ],
+      "overlap_including_mirror": 0.0796
+    },
+    {
+      "pair": [
+        "===",
+        "==>"
+      ],
+      "overlap_including_mirror": 0.0795
+    },
+    {
+      "pair": [
+        ">=",
+        "<=>"
+      ],
+      "overlap_including_mirror": 0.074
+    },
+    {
+      "pair": [
+        "<-",
+        "<=>"
+      ],
+      "overlap_including_mirror": 0.0637
+    },
+    {
+      "pair": [
+        "!==",
+        "==>"
+      ],
+      "overlap_including_mirror": 0.0623
+    },
+    {
+      "pair": [
+        "<=>",
+        "~="
+      ],
+      "overlap_including_mirror": 0.0622
+    },
+    {
+      "pair": [
+        "<--",
+        "~="
+      ],
+      "overlap_including_mirror": 0.0573
+    },
+    {
+      "pair": [
+        "==",
+        "<-"
+      ],
+      "overlap_including_mirror": 0.0556
+    },
+    {
+      "pair": [
+        "-->",
+        "~="
+      ],
+      "overlap_including_mirror": 0.0529
+    },
+    {
+      "pair": [
+        "<->",
+        "~="
+      ],
+      "overlap_including_mirror": 0.0413
+    },
+    {
+      "pair": [
+        "->",
+        "~="
+      ],
+      "overlap_including_mirror": 0.0378
+    },
+    {
+      "pair": [
+        "<-",
+        "~="
+      ],
+      "overlap_including_mirror": 0.0306
+    }
+  ],
+  "note": "Normalized outline overlap is a copy-detection aid; design contrast is reviewed visually at 40 and 76 pixels."
+}

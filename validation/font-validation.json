@@ -2,16 +2,16 @@
   "fonts": {
     "MixedCompany": {
       "characters": 186,
-      "unique_advance_widths": 153,
+      "unique_advance_widths": 158,
       "fixed_pitch": false,
       "ligature_shaping": {
         "<=": {
           "glyph": "lig_003C_003D",
-          "advance": 1152
+          "advance": 1194
         },
         ">=": {
           "glyph": "lig_003E_003D",
-          "advance": 1112
+          "advance": 1142
         },
         "!=": {
           "glyph": "lig_0021_003D",
@@ -31,39 +31,39 @@
         },
         "<-": {
           "glyph": "lig_003C_002D",
-          "advance": 1015
+          "advance": 1057
         },
         "->": {
           "glyph": "lig_002D_003E",
-          "advance": 975
+          "advance": 1005
         },
         "<->": {
           "glyph": "lig_003C_002D_003E",
-          "advance": 1536
+          "advance": 1608
         },
         "=>": {
           "glyph": "lig_003D_003E",
-          "advance": 1112
+          "advance": 1142
         },
         "<=>": {
           "glyph": "lig_003C_003D_003E",
-          "advance": 1673
+          "advance": 1745
         },
         "<--": {
           "glyph": "lig_003C_002D_002D",
-          "advance": 1469
+          "advance": 1511
         },
         "-->": {
           "glyph": "lig_002D_002D_003E",
-          "advance": 1429
+          "advance": 1459
         },
         "<==": {
           "glyph": "lig_003C_003D_003D",
-          "advance": 1743
+          "advance": 1785
         },
         "==>": {
           "glyph": "lig_003D_003D_003E",
-          "advance": 1703
+          "advance": 1733
         },
         "~=": {
           "glyph": "lig_007E_003D",
@@ -80,12 +80,12 @@
         "....": 80.0,
         "    ": 124.0,
         "0000": 236.0,
-        "AVTo": 257.921875,
+        "AVTo": 260.921875,
         "£€$%": 265.0,
         "Àéñü": 259.0
       },
       "bounds_y": [
-        -222,
+        -230,
         940
       ],
       "checksum_valid": true
@@ -175,7 +175,7 @@
         "Àéñü": 256.0
       },
       "bounds_y": [
-        -222,
+        -230,
         940
       ],
       "checksum_valid": true
