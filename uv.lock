@@ -99,7 +99,7 @@ wheels = [
 
 [[package]]
 name = "mixedcompany"
-version = "3.4"
+version = "3.5"
 source = { virtual = "." }
 dependencies = [
     { name = "brotli" },

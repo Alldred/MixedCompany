@@ -2,7 +2,7 @@
 
 For Will ❤️
 
-A display typeface. Every letter is its own drawing, including the accented ones.
+A display typeface. Every letter is its own drawing, including the accented ones. Repeated letters cycle through extra designs.
 
 Two fonts: **MixedCompany** (proportional) and **MixedCompany Mono** (fixed width).
 
@@ -19,7 +19,11 @@ Two fonts: **MixedCompany** (proportional) and **MixedCompany Mono** (fixed widt
 
 [All files](outputs/MixedCompany-Package.zip)
 
-[Character set](outputs/MixedCompany-Character-Atlas.png) · [Accents](outputs/MixedCompany-Accent-Families.png) · [Proportional vs mono](outputs/MixedCompany-Spacing-Comparison.png)
+[Character set](outputs/MixedCompany-Character-Atlas.png) · [Accents](outputs/MixedCompany-Accent-Families.png) · [Letter variants](outputs/MixedCompany-Letter-Variants.png) · [Proportional vs mono](outputs/MixedCompany-Spacing-Comparison.png)
+
+## Repeating letters
+
+Contextual alternates are on by default. `see`, `little`, `look`, `less` and `foo(bar(x))` each pick a different drawing for the repeated mark. Every A–Z/a–z has at least two versions; common letters and stacking code punctuation such as `)` `(` `]` `{` `.` have three.
 
 ## Ligatures
 

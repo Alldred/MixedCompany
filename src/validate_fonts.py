@@ -28,7 +28,7 @@ for stem,mono in [('MixedCompany',False),('MixedCompanyMono',True)]:
     assert woff['hmtx'].metrics==ttf['hmtx'].metrics
     widths={a for a,lsb in ttf['hmtx'].metrics.values()}
     if mono:
-        assert {ttf['hmtx'][name][0] for name in set(cmap.values())|{'.notdef'}}=={640}
+        assert {ttf['hmtx'][name][0] for name in set(cmap.values())|{'.notdef'}}=={560}
         assert not any(table in ttf for table in ['kern','GPOS'])
     else:
         assert len(widths)>20
@@ -37,13 +37,13 @@ for stem,mono in [('MixedCompany',False),('MixedCompanyMono',True)]:
     assert ttf['GSUB'].compile(ttf)==woff['GSUB'].compile(woff)
     hb=shutil.which('hb-shape')
     assert hb, 'Install HarfBuzz CLI tools to check real ligature shaping.'
-    def shape(text,enabled=True):
+    def shape(text,enabled=True,calt=True):
         return json.loads(subprocess.check_output([hb,str(path),'--text='+text,'--output-format=json',
-            '--features=liga='+('1' if enabled else '0')],text=True))
+            '--features=liga='+('1' if enabled else '0')+',calt='+('1' if calt else '0')],text=True))
     shaped={}
     for sequence in design['ligatures']:
         expected='lig_'+'_'.join(f'{ord(c):04X}' for c in sequence)
-        result=shape(sequence);plain=shape(sequence,False)
+        result=shape(sequence);plain=shape(sequence,False,calt=False)
         assert len(result)==1 and result[0]['g']==expected,(sequence,result)
         assert len(plain)==len(sequence),(sequence,plain)
         advance=sum(ttf['hmtx'][cmap[ord(c)]][0] for c in sequence)
@@ -52,9 +52,25 @@ for stem,mono in [('MixedCompany',False),('MixedCompanyMono',True)]:
         g=ttf['glyf'][expected]
         assert g.numberOfContours>0 and 0<=g.xMin<g.xMax<=advance
         assert -380<=g.yMin<g.yMax<=1040
-        if mono:assert advance==640*len(sequence)
+        if mono:assert advance==560*len(sequence)
         shaped[sequence]={'glyph':expected,'advance':advance}
     assert all(not g['g'].startswith('lig_') for g in shape('< = - > ! ='))
+    alt_shaped={}
+    for c,labels in design['alternates'].items():
+        name=cmap[ord(c)]
+        alts=[f'{name}.alt{i}' for i in range(1,len(labels)+1)]
+        for glyph in alts:
+            g=ttf['glyf'][glyph];a,lsb=ttf['hmtx'][glyph]
+            assert g.numberOfContours>0 and 0<=g.xMin==lsb<g.xMax<=a,(stem,glyph)
+            assert -380<=g.yMin<g.yMax<=1040,(stem,glyph)
+            if mono:assert a==560
+        doubled=shape(c+c,enabled=False);off=shape(c+c,enabled=False,calt=False)
+        assert [g['g'] for g in doubled]==[name,alts[0]],(c,doubled)
+        assert [g['g'] for g in off]==[name,name],(c,off)
+        if len(alts)>=2:
+            triple=shape(c+c+c,enabled=False)
+            assert [g['g'] for g in triple]==[name,alts[0],alts[1]],(c,triple)
+        alt_shaped[c]=alts
     fonts={s:ImageFont.truetype(str(path),s) for s in [48,128]}
     bounds=[]
     for cp,name in cmap.items():
@@ -70,9 +86,10 @@ for stem,mono in [('MixedCompany',False),('MixedCompanyMono',True)]:
         if table!='GlyphOrder':ttf[table].compile(ttf)
     f=ImageFont.truetype(str(path),100)
     samples={s:f.getlength(s) for s in ['iiii','WWWW','....','    ','0000','AVTo','£€$%','Àéñü']}
-    if mono:assert set(samples.values())=={256.0},samples
+    if mono:assert set(samples.values())=={224.0},samples
     else:assert len(set(samples.values()))>3,samples
     reports[stem]={'characters':len(cmap),'unique_advance_widths':len(widths),'fixed_pitch':mono,'ligature_shaping':shaped,
+        'contextual_alternates':alt_shaped,
         'every_glyph_rasterized_at_px':[48,128],'four_character_widths_at_100px':samples,
         'bounds_y':[min(b[0] for b in bounds),max(b[1] for b in bounds)],'checksum_valid':True}
 report={'fonts':reports,'independent_accent_bodies':54,

@@ -12,7 +12,7 @@ from fontTools.fontBuilder import FontBuilder
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.ttLib import TTFont, newTable
 from fontTools.ttLib.tables._k_e_r_n import KernTable_format_0
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageChops
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / 'outputs'
@@ -468,6 +468,8 @@ def raw_geometry(c):
     return geom.buffer(0)
 
 CELL=640
+MONO_ADV=560
+MONO_LIMIT=465
 def make_geometry(c):
     geom=raw_geometry(c);mode,w,slant,label=DESIGNS[c]
     # Baselines and body heights remain steady while silhouettes vary.
@@ -496,7 +498,7 @@ old_raw_geometry=raw_geometry
 CLEAN_PATHS=copy.deepcopy(G)
 BASE_LABELS={c:spec[3].split(' · ',1)[-1] for c,spec in DESIGNS.items()}
 
-def rr(c):return random.Random(17391+ord(c)*911)
+def rr(c,salt=0):return random.Random(17391+ord(c)*911+salt*7919)
 
 def union(parts):
     parts=[p for p in parts if not p.is_empty]
@@ -554,8 +556,8 @@ def warped(paths,seed,amplitude=10):
         result.append([(x+amplitude*math.sin(y/83+j+seed*.2),y+amplitude*.5*math.sin(x/69+j+seed)) for x,y in pts])
     return result
 
-def themed(paths,mode,w,c):
-    rng=rr(c);seed=ord(c)
+def themed(paths,mode,w,c,salt=0):
+    rng=rr(c,salt);seed=ord(c)+salt*131
     p=copy.deepcopy(paths)
     if mode=='googly':
         body=stroke(oval(225,250,225,250),100,'round')
@@ -699,9 +701,10 @@ def themed(paths,mode,w,c):
         if mode=='topography':
             return union([union([stroke(warped([q],seed+j,j*2+1)[0],ww,'round') for q in p]).boundary.buffer(6) for j,ww in enumerate([52,94,138])])
         if mode=='pencil':
-            return union([stroke(warped([q],seed+j,3+j*2)[0],13 if j else 21,'round') for j in range(3) for q in p])
+            return union([stroke(warped([q],seed+j,3+j*2)[0],w*(.38+j*.09),'round') for j in range(4) for q in p])
         if mode=='scribble':
-            return union([translate(stroke(warped([q],seed+j,10)[0],8,'round'),xoff=(j-2)*9) for j in range(5) for q in p])
+            sw=max(16,w*.3)
+            return union([translate(stroke(warped([q],seed+j,10)[0],sw if j else sw*1.25,'round'),xoff=(j-2)*10) for j in range(5) for q in p])
         # Three intertwined cords with alternating crossings.
         parts=[]
         for q in p:
@@ -716,9 +719,10 @@ def themed(paths,mode,w,c):
             for j,(x,y) in enumerate(resample(q,81 if mode not in ['feather','saw'] else 45)):
                 sign=1 if j%2 else -1
                 if mode=='vine':
-                    parts.append(rotate(scale(Point(x+sign*31,y+22).buffer(28,quad_segs=10),xfact=1.25,yfact=.48,origin=(x+sign*31,y+22)),sign*35,origin=(x,y)))
+                    parts.append(rotate(scale(Point(x+sign*31,y+22).buffer(max(24,w*.7),quad_segs=10),xfact=1.25,yfact=.48,origin=(x+sign*31,y+22)),sign*35,origin=(x,y)))
                 elif mode=='snowflake':
-                    parts += [stroke([(x,y),(x+sign*54,y+36),(x+sign*38,y+38)],13,'flat'),stroke([(x+sign*36,y+25),(x+sign*42,y+7)],10,'flat')]
+                    arm=max(22,w*.5)
+                    parts += [stroke([(x,y),(x+sign*54,y+36),(x+sign*38,y+38)],arm,'flat'),stroke([(x+sign*36,y+25),(x+sign*42,y+7)],max(16,w*.38),'flat')]
                 elif mode=='coral':
                     parts += [stroke([(x,y),(x+sign*48,y+53),(x+sign*29,y+78)],19,'round'),Point(x+sign*48,y+53).buffer(16,quad_segs=10)]
                 elif mode=='flame':
@@ -789,9 +793,123 @@ def themed(paths,mode,w,c):
         for x,y in ends(p):
             if mode=='sword':ornaments.append(Polygon([(x-43,y),(x,y+77),(x+43,y),(x,y-25)]))
             else:
-                ornaments.append(stroke(path(f'M{x} {y} C{x+85} {y+110} {x+133} {y-40} {x+60} {y-15}'),14,'round'))
-                if mode=='crown':ornaments.append(diamonds([(x+60,y+35)],24))
+                ornaments.append(stroke(path(f'M{x} {y} C{x+85} {y+110} {x+133} {y-40} {x+60} {y-15}'),max(18,w*.42),'round'))
+                if mode=='crown':ornaments.append(diamonds([(x+60,y+35)],max(24,w*.7)))
         return union([body,*ornaments])
+    if mode=='ribbon':
+        g=union([stroke(q,w,'flat') for q in p])
+        channel=union([stroke(q,max(14,w*.24),'flat') for q in p])
+        nicks=[]
+        for q in p:
+            for j,(x,y) in enumerate(resample(q,max(64,w))):
+                if j%2:nicks.append(rotate(Polygon([(x-16,y),(x+30,y-15),(x+14,y),(x+30,y+15)]),j*17,origin=(x,y)))
+        return g.difference(union([channel,*nicks]).intersection(g.buffer(-8)))
+    if mode=='neon':
+        g=union([stroke(q,w,'round') for q in p])
+        return union([g.difference(g.buffer(-max(11,w*.26))),*[Point(x,y).buffer(w*.4,quad_segs=14) for x,y in ends(p)]])
+    if mode=='rope':
+        parts=[]
+        for q in p:
+            pts=resample(q,8)
+            for sign in (-1,1):
+                strand=[(x+sign*15*math.sin(k*.55+seed),y+sign*11*math.cos(k*.55+seed)) for k,(x,y) in enumerate(pts)]
+                parts.append(stroke(strand,max(18,w*.48),'round'))
+        return union(parts)
+    if mode=='marquee':
+        return union([Point(x,y).buffer(max(24,w*.5),quad_segs=14) for q in p for x,y in resample(q,max(34,w*.72))])
+    if mode=='eclipse':
+        g=union([stroke(q,w,'round') for q in p])
+        moons=[Point(x+w*.55,y+w*.12).buffer(w*.34,quad_segs=12).difference(Point(x+w*.78,y+w*.12).buffer(w*.22,quad_segs=10)) for q in p for x,y in resample(q,max(70,w*1.4))]
+        return union([g,*moons])
+    if mode=='gem':
+        g=union([stroke(q,w,'flat') for q in p]);x1,y1,x2,y2=g.bounds;cx,cy=(x1+x2)/2,(y1+y2)/2
+        pts=[pt for q in p for pt in resample(q,88)]
+        facets=[Polygon([(cx,cy),pts[j],pts[j+1]]) for j in range(len(pts)-1)]
+        inner=union([f for f in facets if f.area>60]).intersection(g.buffer(-max(16,w*.32)))
+        return g.difference(inner) if inner and not inner.is_empty else g
+    if mode=='spark':
+        g=union([stroke(q,w,'flat') for q in p]);flares=[]
+        for q in p:
+            for j,(x,y) in enumerate(resample(q,86)):
+                sign=1 if j%2 else -1
+                flares.append(Polygon([(x,y),(x+sign*46,y+32),(x+sign*11,y+5)]))
+        return union([g,*flares])
+    if mode=='doubleline':
+        parts=[]
+        for q in p:
+            if len(q)<2:continue
+            pts=resample(q,10)
+            for sign in (-1,1):
+                off=[]
+                for (x,y),(nx,ny) in zip(pts,pts[1:]+pts[-1:]):
+                    dx,dy=nx-x,ny-y;L=math.hypot(dx,dy) or 1
+                    off.append((x-sign*dy/L*w*.4,y+sign*dx/L*w*.4))
+                parts.append(stroke(off,max(18,w*.44),'round'))
+        return union(parts)
+    if mode=='slabblock':
+        g=union([stroke(q,w,'flat') for q in p])
+        serifs=[box(x-w*1.2,y-w*.24,x+w*1.2,y+w*.24) for x,y in ends(p)]
+        return union([g,*serifs])
+    if mode=='crescent':
+        g=union([stroke(q,w,'round') for q in p])
+        bites=[Point(x+w*.3,y).buffer(w*.34,quad_segs=12) for q in p for x,y in resample(q,max(36,w*.9))]
+        return g.difference(union(bites))
+    if mode=='spatter':
+        g=union([stroke(q,w,'round') for q in p]);blobs=[]
+        for q in p:
+            for x,y in resample(q,68):
+                blobs.append(Point(x+rng.uniform(-w*.9,w*.9),y+rng.uniform(-w*.45,w*.45)).buffer(rng.uniform(9,w*.3),quad_segs=8))
+        return union([g,*blobs])
+    if mode=='prism':
+        parts=[]
+        for q in p:
+            pts=resample(q,46)
+            for j,(a,b) in enumerate(zip(pts,pts[1:])):
+                dx=20 if j%2 else -20
+                parts.append(stroke([(a[0]+dx,a[1]),(b[0]+dx,b[1])],max(22,w*.88),'flat'))
+        return union(parts)
+    if mode=='ticket':
+        g=union([stroke(q,w,'round') for q in p]);x1,y1,x2,y2=g.bounds
+        bites=[Point(x,y1).buffer(10,quad_segs=8) for x in range(int(x1),int(x2)+1,26)]
+        bites+=[Point(x,y2).buffer(10,quad_segs=8) for x in range(int(x1),int(x2)+1,26)]
+        return g.difference(union(bites))
+    if mode=='stained':
+        g=union([stroke(q,w,'flat') for q in p]);holes=[]
+        x1,y1,x2,y2=g.bounds
+        for ix in range(int(x1),int(x2)+1,34):
+            for iy in range(int(y1),int(y2)+1,34):
+                holes.append(box(ix+6,iy+6,ix+28,iy+28))
+        return g.difference(union(holes).intersection(g.buffer(-12)))
+    if mode=='woodgrain':
+        g=union([stroke(q,w,'flat') for q in p])
+        cuts=[stroke(path(f'M-60 {y} C140 {y+16} 300 {y-20} 720 {y}'),7,'flat') for y in range(-80,900,26)]
+        return g.difference(union(cuts).intersection(g.buffer(-14)))
+    if mode=='checker':
+        g=union([stroke(q,w,'flat') for q in p]);cells=[]
+        x1,y1,x2,y2=g.bounds
+        for ix in range(int(x1/30)-1,int(x2/30)+2):
+            for iy in range(int(y1/30)-1,int(y2/30)+2):
+                if (ix+iy)%2==0:cells.append(box(ix*30,iy*30,ix*30+30,iy*30+30))
+        spine=union([stroke(q,max(24,w*.38),'round') for q in p])
+        return union([spine,g.intersection(union(cells))]) if cells else g
+    if mode=='constellation':
+        nodes=union([Point(x,y).buffer(max(18,w*.42),quad_segs=12) for q in p for x,y in resample(q,max(48,w*1.05))])
+        bars=union([stroke(q,max(16,w*.3),'round') for q in p])
+        return union([nodes,bars])
+    if mode=='meander':
+        parts=[]
+        for q in p:
+            pts=resample(q,20);seq=[]
+            for j,(x,y) in enumerate(pts[:-1]):
+                nx,ny=pts[j+1];dx,dy=nx-x,ny-y;L=math.hypot(dx,dy) or 1
+                px,py=-dy/L*w*.58,dx/L*w*.58
+                seq.append((x+px,y+py) if j%2 else (x-px,y-py))
+            if len(seq)>1:parts.append(stroke(seq,max(20,w*.42),'flat'))
+        return union(parts)
+    if mode=='stencil':
+        g=union([stroke(q,w,'flat') for q in p])
+        bridges=[rotate(box(-200,y,1100,y+18),11,origin=(230,325)) for y in (160,470)]
+        return g.difference(union(bridges))
     raise ValueError('Unimplemented theme: '+mode)
 
 PRIMARY={
@@ -809,43 +927,43 @@ PRIMARY={
 'm':('archway',39,0,'Roman aqueduct'),
 'o':('googly',100,0,'Googly-eyed creature'),
 'q':('stone',91,.03,'Fractured stone'),
-'s':('pencil',44,.11,'Repeated pencil strokes'),
+'s':('pencil',108,.04,'Repeated pencil strokes'),
 'u':('goo',126,0,'Dripping goo'),
 '2':('chalk',85,.025,'Rough chalk'),
 '3':('accordion',119,0,'Pleated paper'),
 '5':('knit',123,0,'Knitted wool'),
 '9':('topography',87,0,'Fingerprint contours'),
-'#':('bamboo',58,.04,'Bamboo lattice'),
+'#':('bamboo',88,.04,'Bamboo lattice'),
 '$':('shards',83,0,'Engraved currency'),
-'&':('vine',36,0,'Climbing vine'),
+'&':('vine',78,0,'Climbing vine'),
 '?':('paper',94,.025,'Torn-paper question'),
-'@':('scribble',56,0,'Scribbled spiral'),
-'%':('circuit',69,0,'Electronic percentage'),
+'@':('scribble',86,0,'Scribbled spiral'),
+'%':('circuit',88,0,'Electronic percentage'),
 '€':('piano',101,0,'Euro keys'),
 '£':('chrome',100,0,'Chrome pound'),
-'¥':('saw',51,0,'Serrated yen'),
-'{':('feather',28,0,'Feather brace'),
-'}':('coral',26,0,'Coral brace'),
-'*':('snowflake',22,0,'Snow crystal'),
+'¥':('saw',82,0,'Serrated yen'),
+'{':('stained',104,0,'Stained-glass brace'),
+'}':('thorns',79,0,'Thorny hedge brace'),
+'*':('snowflake',68,0,'Snow crystal'),
 '+':('lego',96,0,'Building-block plus'),
 '~':('spring',74,0,'Coiled spring'),
-'←':('lightning',54,0,'Lightning arrow'),
+'←':('lightning',70,0,'Lightning arrow'),
 '→':('copper_pipe',82,0,'Pipework arrow'),
-'↑':('crown',32,0,'Crowned arrow'),
-'↓':('icicle',43,0,'Falling icicle')}
+'↑':('crown',58,0,'Crowned arrow'),
+'↓':('icicle',62,0,'Falling icicle')}
 # Deliberately contrasting constructions for visually related characters.
 PRIMARY.update({
     '<':('pixels',110,0,'Arcade stair-step angle'),
     '>':('brush_ink',92,0,'Sweeping brush angle'),
     '(':('brush_ink',110,0,'Broad ink parenthesis'),
-    ')':('beads',68,0,'Pearl-bead parenthesis'),
+    ')':('beads',90,0,'Pearl-bead parenthesis'),
     ']':('pixels',115,0,'Pixel gate bracket'),
-    '{':('filigree',39,0,'Scrolled iron brace'),
+    '{':('stained',104,0,'Stained-glass brace'),
     '}':('thorns',79,0,'Thorny hedge brace'),
     chr(92):('candy',122,0,'Striped ribbon backslash'),
     '–':('bone',75,0,'Knuckled en dash'),
     '—':('chain',113,0,'Chain-link em dash'),
-    '−':('circuit',54,0,'Terminal-ring minus'),
+    '−':('circuit',78,0,'Terminal-ring minus'),
     '‘':('filigree',34,0,'Curlicue opening quote'),
     '’':('pixels',94,0,'Pixel-chip closing quote'),
     '“':('candy',115,0,'Striped pennant quotes'),
@@ -933,24 +1051,42 @@ G['H']=[path('M0 0 L0 700'),path('M480 0 L480 700'),path('M0 350 L480 350')]
 G['i']=[path('M-55 490 L0 490 L0 0 L70 0'),[(0,675)]]
 G['m']=[path('M0 0 L0 500'),path('M0 340 C0 570 285 570 285 340 L285 0'),path('M285 340 C285 570 570 570 570 340 L570 0')]
 
+def seal(cx,cy,r,n=14):
+    disc=Point(cx,cy).buffer(r,quad_segs=28)
+    scallop=union([Point(cx+r*math.cos(k*math.tau/n),cy+r*math.sin(k*math.tau/n)).buffer(r*.12,quad_segs=8) for k in range(n)])
+    return union([disc,scallop])
+
+SYMBOL_CRAFT={
+    '_':(union([box(0,-150,470,-70),*[Polygon([(x,-148),(x+40,-210),(x+80,-148)]) for x in range(0,400,90)]]),80,'saw_hem','Saw-edge underscore'),
+    '…':(union([Point(x,40).buffer(52,quad_segs=16).difference(Point(x,40).buffer(22,quad_segs=14)) for x in [0,210,420]]),70,'ring_stops','Three open-ring stops'),
+    '"':(union([Polygon([(0,760),(110,760),(80,520),(8,590)]),Polygon([(150,735),(250,735),(220,520),(165,520)])]),90,'flag_quotes','Mismatched flag quotes'),
+    '`':(Polygon([(-30,798),(64,770),(78,729),(123,745),(108,692),(181,542),(67,602),(58,646),(7,637),(26,688),(-29,732)]).difference(Polygon(oval(22,741,16,22))),70,'dragon_tooth','Barbed dragon-tooth backtick'),
+    '!':(union([Polygon([(-60,710),(60,710),(24,220),(-24,220)]),diamonds([(0,48)],56),Polygon([(-78,690),(78,690),(0,630)])]),90,'spark_bang','Sparked exclamation'),
+    "'":(Polygon([(8,760),(100,745),(62,490),(-6,520)]),80,'wedge_quote','Wedge apostrophe'),
+    ',':(union([Point(48,48).buffer(52,quad_segs=14),stroke(path('M48 48 Q110 -40 6 -155'),42,'round')]),70,'hook_comma','Hooked comma'),
+    '-':(union([box(0,230,340,370),*[Point(x,300).buffer(26,quad_segs=10) for x in (55,170,285)]]),80,'rivet_bar','Riveted hyphen'),
+    '.':(diamonds([(0,48)],72),80,'gem_stop','Gem full stop'),
+    '/':(themed([path('M0 -80 L410 780')],'lightning',92,'/'),92,'lightning','Lightning slash'),
+    ':':(union([Point(0,445).buffer(50,quad_segs=14),diamonds([(0,48)],54)]),80,'mixed_colon','Ring-and-gem colon'),
+    ';':(union([diamonds([(70,455)],56),stroke(path('M70 90 Q125 -45 4 -160'),42,'round')]),80,'gem_semi','Gem-and-hook semicolon'),
+    '=':(union([box(0,410,470,520),*[Point(x,210).buffer(38,quad_segs=12) for x in range(40,450,78)]]),90,'slab_beads','Slab-and-bead equals'),
+    '[':(union([box(0,-80,88,780),box(0,690,230,780),box(0,-80,230,10),*[Point(44,y).buffer(24,quad_segs=10) for y in (120,350,580)]]),90,'bolted_gate','Bolted left bracket'),
+    '^':(Polygon([(0,420),(205,730),(410,420),(325,420),(205,590),(85,420)]),90,'roof_caret','Roof caret'),
+    '|':(union([box(8,y,78,y+108) for y in range(-90,760,145)]+[box(-12,y+96,98,y+128) for y in range(-90,760,145)]),80,'bamboo_pipe','Bamboo pipe'),
+    '¢':(union([themed(G['c'],'buttons',88,'¢'),stroke(path('M210 -90 L210 640'),48,'flat')]),88,'button_cent','Buttoned cent'),
+    '÷':(union([box(20,250,430,365),diamonds([(225,545)],50),diamonds([(225,70)],50)]),90,'gem_divide','Gem division'),
+    '°':(union([Point(0,620).buffer(78,quad_segs=18).difference(Point(0,620).buffer(36,quad_segs=14)),*[stroke([(96*math.cos(k*math.tau/8),620+96*math.sin(k*math.tau/8)),(128*math.cos(k*math.tau/8),620+128*math.sin(k*math.tau/8))],18,'flat') for k in range(8)]]),70,'sun_degree','Sunburst degree'),
+    '•':(union([Polygon([(70*math.cos(k*math.tau/6),310+70*math.sin(k*math.tau/6)) for k in range(6)]),Point(0,310).buffer(28,quad_segs=12)]),90,'hex_bullet','Hex flower bullet'),
+    '©':(seal(300,350,250).difference(stroke(path('M410 490 C230 640 150 180 400 190'),62,'round')),80,'wax_copyright','Wax-seal copyright'),
+    '®':(seal(300,350,250).difference(union([box(175,145,245,555),stroke(path('M245 555 C455 545 450 330 245 345'),58,'round'),stroke(path('M250 345 L445 145'),58,'flat')])),80,'wax_registered','Wax-seal registered'),
+    '±':(union([box(150,200,315,565),box(35,325,430,445),box(35,-20,430,85)]),90,'plus_bar','Stepped plus-minus'),
+    '™':(Polygon([(0,390),(50,730),(620,730),(670,390),(610,420),(50,420)]).difference(union([box(80,460,250,520),box(135,460,195,690),stroke(path('M300 470 L300 690 L385 540 L470 690 L470 470'),36,'flat')])),80,'banner_tm','Banner trademark'),
+}
+
 def body_raw(c):
-    if c=='_':
-        g=box(0,-143,470,-96)
-        teeth=[Polygon([(x,-141),(x+38,-191),(x+76,-141)]) for x in range(0,400,80)]
-        return union([g,*teeth]),c,70,0,'saw_hem','Saw-edge underscore'
-    if c=='…':
-        rings=union([Point(x,30).buffer(44,quad_segs=16).difference(Point(x,30).buffer(25,quad_segs=16)) for x in [0,200,400]])
-        return rings,c,60,0,'ring_stops','Three open-ring stops'
-    if c=='"':
-        flags=union([Polygon([(0,750),(95,750),(70,540),(10,600)]),
-                     Polygon([(155,725),(210,725),(190,545),(160,545)])])
-        return flags,c,80,0,'flag_quotes','Mismatched flag quotes'
-    if c=='`':
-        # A pierced dragon tooth: broad upper-left head, barbs and a tapered tip.
-        tooth=Polygon([(-30,798),(64,770),(78,729),(123,745),(108,692),
-                       (181,542),(67,602),(58,646),(7,637),(26,688),(-29,732)])
-        eye=Polygon(oval(22,741,16,22))
-        return tooth.difference(eye),c,60,0,'dragon_tooth','Barbed dragon-tooth backtick'
+    if c in SYMBOL_CRAFT:
+        g,w,mode,label=SYMBOL_CRAFT[c]
+        return g,c,w,0,mode,label
     if c in ACCENT:
         base,mark,paths=accented_skeleton(c);mode,w,slant,label=ACCENT[c]
         return themed(paths,mode,w,c),base,w,slant,mode,label
@@ -960,18 +1096,23 @@ def body_raw(c):
     mode,w,slant,label=DESIGNS[c]
     return old_raw_geometry(c),c,w,slant,mode,BASE_LABELS[c]
 
-def normalize_body(c):
-    geom,base,w,slant,mode,label=body_raw(c)
+def finish_body(geom,base,w,slant,mode,encoded=None):
+    geom=make_valid(geom.buffer(0)) if not geom.is_empty else geom
     if base.isascii() and base.isalnum():
         desc=base in 'Qfgjpqy' or mode in ['goo','icicle','candle']
         low=-w/2 if desc else geom.bounds[1]
         target=710 if base.isupper() or base.isdigit() or base in 'bdfhkl' else 520
         top=geom.bounds[3]
-        if base in 'ij' and c not in ACCENT:top=500+w/2
-        geom=scale(translate(geom,yoff=-low),xfact=1,yfact=target/(top-low),origin=(0,0))
+        if base in 'ij' and encoded not in ACCENT:top=500+w/2
+        span=max(top-low,40)
+        geom=scale(translate(geom,yoff=-low),xfact=1,yfact=target/span,origin=(0,0))
     else:geom=translate(geom,yoff=18)
     geom=skew(geom,xs=math.degrees(math.atan(slant)),origin=(0,0)).simplify(.55,preserve_topology=True).buffer(0)
-    return geom,mode,label
+    return geom
+
+def normalize_body(c):
+    geom,base,w,slant,mode,label=body_raw(c)
+    return finish_body(geom,base,w,slant,mode,c),mode,label
 
 MARKS={'\u0301':[path('M-65 0 L75 120')],'\u0300':[path('M-75 120 L65 0')],
 '\u0302':[path('M-130 0 L0 125 L130 0')],'\u0303':[path('M-140 30 C-60 150 65 -80 145 50')],
@@ -989,7 +1130,7 @@ def mark_geometry(c,mode):
 
 def fit_glyph(c,body,mono=True):
     g=body
-    limit=532 if mono else 720
+    limit=MONO_LIMIT if mono else 720
     width=g.bounds[2]-g.bounds[0]
     if width>limit:g=scale(g,xfact=limit/width,yfact=1,origin=(0,0))
     if c in ACCENT:
@@ -999,7 +1140,7 @@ def fit_glyph(c,body,mono=True):
         g=union([g,translate(m,xoff=center,yoff=yy)])
     width=g.bounds[2]-g.bounds[0]
     if width>limit:g=scale(g,xfact=limit/width,yfact=1,origin=(0,0));width=limit
-    adv=640 if mono else math.ceil(width+86)
+    adv=MONO_ADV if mono else math.ceil(width+86)
     g=translate(g,xoff=(adv-width)/2-g.bounds[0])
     return g,int(adv)
 
@@ -1007,6 +1148,211 @@ BODIES={};LABELS={}
 for c in list(G)+list(ACCENT):
     body,mode,label=normalize_body(c);BODIES[c]=body;LABELS[c]=label
 assert len(ACCENT)==54
+
+def parse_alt_paths(c,spec):
+    raw=spec[4] if len(spec)>4 else G[c]
+    return [path(x) if isinstance(x,str) else x for x in raw]
+
+def craft_single_a(w):
+    bowl=stroke(oval(205,230,205,230),w,'round')
+    stem=stroke(path('M410 460 L410 0 L490 48'),w*1.05,'round')
+    ear=stroke(path('M410 390 C520 490 430 560 320 500'),w*.42,'round')
+    return union([bowl,stem,ear])
+
+def craft_didone_e(w):
+    bowl=stroke(path('M390 95 C20 20 10 490 400 430'),w,'round')
+    bar=Polygon([(30,235),(355,250),(355,332),(30,318)])
+    ball=Point(392,92).buffer(max(28,w*.58),quad_segs=14)
+    return union([bowl,bar,ball])
+
+def craft_poster_a(w):
+    legs=union([stroke(path('M30 0 L230 700'),w,'flat'),stroke(path('M230 700 L430 0'),w,'flat')])
+    bar=box(95,240,365,335)
+    feet=[Polygon([(x-55,0),(x+55,0),(x+28,70),(x-28,70)]) for x in (30,430)]
+    return union([legs,bar,*feet])
+
+def craft_pillar_i(w):
+    stem=box(40,0,40+max(54,w),500)
+    tittle=Point(40+max(54,w)/2,655).buffer(max(28,w*.52),quad_segs=16)
+    base=Polygon([(20,0),(40+max(54,w)+20,0),(40+max(54,w)-8,70),(48,70)])
+    return union([stem,tittle,base])
+
+def craft_hooked_l(w):
+    stem=stroke(path('M80 730 L80 95'),w,'flat')
+    hook=stroke(path('M80 95 Q80 -30 230 18'),w*.9,'round')
+    cap=box(18,688,150,738)
+    return union([stem,hook,cap])
+
+def craft_umbrella_t(w):
+    stem=stroke(path('M210 0 L210 470'),w*.85,'flat')
+    bar=stroke(path('M10 490 Q210 640 410 490'),w,'round')
+    drop=Point(210,0).buffer(w*.28,quad_segs=10)
+    return union([stem,bar,drop])
+
+def craft_industrial_n(w):
+    left=box(0,0,w,500);right=box(340,0,340+w,500)
+    beam=Polygon([(0,500),(340+w,500),(340+w,500-w*.85),(0,500-w*.85)])
+    rivets=[Point(x,y).buffer(11,quad_segs=8) for x in (w/2,340+w/2) for y in (70,250,430)]
+    return union([left,right,beam]).difference(union(rivets))
+
+def craft_gem_o(w):
+    outer=Polygon([(225,500),(420,350),(420,150),(225,0),(30,150),(30,350)])
+    inner=Polygon([(225,360),(310,270),(310,230),(225,140),(140,230),(140,270)])
+    cuts=[Polygon([(225,500),(250,430),(200,430)]),Polygon([(225,0),(250,70),(200,70)])]
+    return outer.difference(union([inner,*cuts]))
+
+def craft_eclipse_o(w):
+    ring=Point(220,250).buffer(220,quad_segs=28).difference(Point(220,250).buffer(220-max(64,w),quad_segs=28))
+    moon=Point(365,318).buffer(72,quad_segs=20).difference(Point(398,318).buffer(54,quad_segs=16))
+    return union([ring,moon])
+
+def craft_stencil_A(w):
+    body=Polygon([(0,0),(70,0),(200,470),(280,470),(410,0),(480,0),(255,710),(205,710)])
+    bar=Polygon([(110,250),(370,250),(355,330),(125,330)])
+    gaps=[box(210,430,270,510),box(160,80,220,150),box(260,80,320,150)]
+    return union([body,bar]).difference(union(gaps))
+
+def craft_heavy_F(w):
+    stem=box(0,0,w,700);top=box(0,700-w,430,700);mid=box(0,340,310,340+w*.85)
+    ticks=[Polygon([(430,700),(430,700-w),(480,700-w/2)]),Polygon([(310,340),(310,340+w*.85),(355,340+w*.42)])]
+    return union([stem,top,mid,*ticks])
+
+def craft_heavy_W(w):
+    legs=[stroke(p,w,'flat') for p in [path('M0 700 L120 0'),path('M120 0 L250 520'),path('M250 520 L380 0'),path('M380 0 L500 700')]]
+    caps=[box(x-w,y-18,x+w,y+18) for x,y in [(0,700),(500,700)]]
+    return union(legs+caps)
+
+def craft_hex_dot(w):
+    return Polygon([(w*math.cos(k*math.tau/6),40+w*math.sin(k*math.tau/6)) for k in range(6)])
+
+def craft_square_dot(w):
+    return box(-w*.8,-w*.8+40,w*.8,w*.8+40)
+
+def craft_angle_close(w):
+    return Polygon([(8,810),(8+w,810),(w+155,400),(8+w,-110),(8,-110),(118,400)])
+
+def craft_double_close(w):
+    sw=max(38,w*.48)
+    return union([stroke(path('M0 790 C270 555 270 145 0 -90'),sw,'round'),stroke(path('M78 715 C275 530 275 170 78 -15'),sw,'round')])
+
+def craft_angle_open(w):
+    return Polygon([(175,810),(175-w,810),(20,400),(175-w,-110),(175,-110),(57,400)])
+
+def craft_double_open(w):
+    sw=max(38,w*.48)
+    return union([stroke(path('M210 790 C-60 555 -60 145 210 -90'),sw,'round'),stroke(path('M132 715 C-65 530 -65 170 132 -15'),sw,'round')])
+
+CRAFT={
+    ('a',1):craft_single_a,('a',2):craft_poster_a,('e',1):craft_didone_e,
+    ('i',1):craft_pillar_i,('l',1):craft_hooked_l,('t',1):craft_umbrella_t,
+    ('n',1):craft_industrial_n,('o',1):craft_gem_o,('o',2):craft_eclipse_o,
+    ('A',1):craft_stencil_A,('F',1):craft_heavy_F,('W',1):craft_heavy_W,
+    ('.',1):craft_hex_dot,('.',2):craft_square_dot,
+    (')',1):craft_angle_close,(')',2):craft_double_close,
+    ('(',1):craft_angle_open,('(',2):craft_double_open,
+}
+
+# Default plus extras. Common letters get three or four drawings; every other letter gets two.
+ALTS={
+    'a':[('craft',88,0,'Single-storey a with an ear'),('craft',120,0,'Notched poster-wood a')],
+    'e':[('craft',58,0,'Didone e with a ball terminal'),('uncial',118,0,'Medieval uncial e'),('neon',92,0,'Neon-tube e')],
+    'i':[('craft',78,0,'Pillar i with a wedge foot'),('constellation',70,0,'Constellation i')],
+    'o':[('craft',90,0,'Faceted gem o'),('craft',78,0,'Eclipsed ring o')],
+    'n':[('craft',92,0,'Riveted industrial n'),('rope',86,.04,'Twisted-rope n')],
+    's':[('ribbon',118,0,'Folded-ribbon s'),('marquee',96,0,'Marquee-bulb s')],
+    't':[('craft',84,0,'Umbrella t'),('checker',110,0,'Chequered t')],
+    'r':[('spark',88,0,'Sparked r'),('meander',79,0,'Greek-key r')],
+    'l':[('craft',72,0,'Hooked stick l'),('bamboo',98,0,'Bamboo l')],
+    'h':[('ladder',104,0,'Ladder h'),('stained',112,0,'Stained-glass h')],
+    'd':[('stencil',108,.08,'Stencilled d'),('woodgrain',116,0,'Woodgrain d')],
+    'c':[('crescent',94,0,'Crescent-cut c'),('ticket',102,0,'Perforated-ticket c')],
+    'u':[('doubleline',86,0,'Twin-stroke u'),('prism',97,0,'Prism-shard u')],
+    'm':[('checker',108,0,'Chequered m'),('constellation',74,0,'Constellation m')],
+    'b':[('spatter',104,0,'Ink-spattered b')],
+    'f':[('flame',62,.06,'Flaming f')],
+    'g':[('eclipse',80,0,'Eclipsed binocular g')],
+    'j':[('slabblock',96,-.04,'Slab-hook j')],
+    'k':[('spark',90,0,'Sparked k')],
+    'p':[('ticket',114,0,'Perforated p')],
+    'q':[('gem',88,.03,'Gem-cut q')],
+    'v':[('prism',100,0,'Prism v')],
+    'w':[('rope',82,0,'Twisted-rope w')],
+    'x':[('constellation',68,0,'Constellation x')],
+    'y':[('crescent',84,.03,'Crescent y')],
+    'z':[('meander',93,0,'Greek-key z')],
+    'A':[('craft',70,0,'Stencilled poster A'),('spatter',118,0,'Ink-spattered A')],
+    'E':[('stained',120,0,'Stained-glass E'),('woodgrain',118,0,'Woodgrain E')],
+    'O':[('eclipse',86,0,'Eclipsed O'),('gem',110,0,'Gem-cut O')],
+    'S':[('ribbon',122,0,'Folded-ribbon S'),('marquee',98,0,'Marquee-bulb S')],
+    'T':[('slabblock',116,0,'Slabblock T'),('spark',94,0,'Sparked T')],
+    'R':[('rope',90,0,'Twisted-rope R'),('ticket',108,0,'Perforated R')],
+    'I':[('constellation',76,0,'Constellation I'),('meander',88,0,'Greek-key I')],
+    'N':[('checker',112,0,'Chequered N'),('prism',102,0,'Prism N')],
+    'L':[('doubleline',80,0,'Twin-stroke L'),('crescent',92,0,'Crescent L')],
+    'B':[('stained',124,0,'Stained-glass B')],
+    'C':[('crescent',90,0,'Crescent-cut C')],
+    'D':[('woodgrain',118,0,'Woodgrain D')],
+    'F':[('craft',92,0,'Flagged heavy F')],
+    'G':[('ticket',108,.08,'Perforated G')],
+    'H':[('ladder',100,0,'Ladder H')],
+    'J':[('spark',86,-.08,'Sparked J')],
+    'K':[('prism',96,0,'Prism K')],
+    'M':[('checker',118,0,'Chequered M')],
+    'P':[('neon',88,0,'Neon-tube P')],
+    'Q':[('eclipse',84,0,'Eclipsed Q')],
+    'U':[('doubleline',78,0,'Twin-stroke U')],
+    'V':[('gem',92,0,'Gem-cut V')],
+    'W':[('craft',70,0,'Heavy keyed W')],
+    'X':[('spark',90,0,'Sparked X')],
+    'Y':[('crescent',86,0,'Crescent Y')],
+    'Z':[('meander',96,0,'Greek-key Z')],
+}
+ALTS.update({
+    ')':[('craft',92,0,'Angular close-paren'),('craft',86,0,'Double-stroke close-paren')],
+    '(': [('craft',92,0,'Angular open-paren'),('craft',86,0,'Double-stroke open-paren')],
+    ']': [('bone',90,0,'Knuckled right bracket'),('stained',114,0,'Stained-glass right bracket')],
+    '[': [('bricks',110,0,'Brick left bracket'),('ribbon',108,0,'Ribbon left bracket')],
+    '}': [('candy',114,0,'Candy-stripe brace'),('checker',110,0,'Chequered brace')],
+    '{': [('bricks',108,0,'Brick brace'),('rope',90,0,'Rope brace')],
+    '.': [('craft',70,0,'Hex stop'),('craft',62,0,'Square stop')],
+    ',': [('spark',92,0,'Sparked comma')],
+    ';': [('ticket',100,0,'Perforated semicolon')],
+    ':': [('marquee',90,0,'Marquee colon')],
+    '!': [('lightning',84,0,'Lightning bang')],
+    '+': [('spark',94,0,'Sparked plus')],
+    '*': [('constellation',76,0,'Constellation star')],
+    '/': [('candy',112,0,'Candy slash')],
+    '\\': [('lightning',90,0,'Lightning backslash')],
+    '|': [('ladder',100,0,'Ladder pipe')],
+    '&': [('thorns',86,0,'Thorny ampersand')],
+    '<': [('ticket',110,0,'Perforated angle')],
+    '>': [('stencil',108,0,'Stencil angle')],
+    "'": [('spark',82,0,'Sparked apostrophe')],
+    '"': [('pixels',104,0,'Pixel quotes')],
+    '`': [('lightning',74,0,'Lightning backtick')],
+    '#': [('checker',110,0,'Chequered hash')],
+    '%': [('stained',104,0,'Stained-glass percent')],
+    '_': [('bone',80,0,'Knuckled underscore')],
+    '^': [('spark',92,0,'Sparked caret')],
+    '~': [('ripple',84,0,'Ripple tilde')],
+    '=': [('ribbon',112,0,'Ribbon equals')],
+    '?': [('spatter',102,0,'Spattered question')],
+})
+assert set('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')<=set(ALTS)
+
+ALT_BODIES={};ALT_LABELS={};ALT_MODES={}
+for c,specs in ALTS.items():
+    ALT_BODIES[c]=[];ALT_LABELS[c]=[];ALT_MODES[c]=[]
+    for i,spec in enumerate(specs,1):
+        mode,w,slant,label=spec[:4]
+        geom=CRAFT[(c,i)](w) if (c,i) in CRAFT else themed(parse_alt_paths(c,spec),mode,w,c,salt=i)
+        geom=finish_body(geom,c,w,slant,mode)
+        assert not geom.is_empty,(c,i,mode)
+        ALT_BODIES[c].append(geom);ALT_LABELS[c].append(label);ALT_MODES[c].append(mode)
+
+def alt_name(c,i):
+    return f'uni{ord(c):04X}.alt{i}'
+
 
 
 # Additional directly encoded symbols and programming ligatures.
@@ -1084,11 +1430,15 @@ for family,stem,mono in FAMILIES:
     out=ROOT/'outputs'/stem;out.mkdir(exist_ok=True)
     shapes={};metrics={};glyphs={};cmap={}
     miss=box(85,0,555,710).difference(box(125,40,515,670))
-    glyphs['.notdef']=as_glyph(miss);metrics['.notdef']=(640,85)
-    glyphs['space']=TTGlyphPen(None).glyph();metrics['space']=(640 if mono else 305,0);cmap[32]='space';cmap[160]='space'
+    glyphs['.notdef']=as_glyph(miss);metrics['.notdef']=(MONO_ADV if mono else 640,85)
+    glyphs['space']=TTGlyphPen(None).glyph();metrics['space']=(MONO_ADV if mono else 305,0);cmap[32]='space';cmap[160]='space'
     for c,body in BODIES.items():
         g,adv=fit_glyph(c,body,mono);name='uni%04X'%ord(c)
         shapes[c]=g;glyphs[name]=as_glyph(g);metrics[name]=(adv,round(g.bounds[0]));cmap[ord(c)]=name
+    for c,bodies in ALT_BODIES.items():
+        for i,body in enumerate(bodies,1):
+            g,adv=fit_glyph(c,body,mono);name=alt_name(c,i)
+            glyphs[name]=as_glyph(g);metrics[name]=(adv,round(g.bounds[0]))
     for sequence,symbol in LIGATURES.items():
         g=LIGATURE_BODIES[sequence]
         advance=sum(metrics[cmap[ord(c)]][0] for c in sequence)
@@ -1100,14 +1450,14 @@ for family,stem,mono in FAMILIES:
         glyphs[name]=as_glyph(g);metrics[name]=(advance,54)
     fb=FontBuilder(1000,isTTF=True);fb.setupGlyphOrder(list(glyphs));fb.setupCharacterMap(cmap);fb.setupGlyf(glyphs)
     fb.setupHorizontalMetrics(metrics);fb.setupHorizontalHeader(ascent=1040,descent=-380,lineGap=0)
-    fb.setupNameTable({'familyName':family,'styleName':'Regular','uniqueFontIdentifier':family+' 3.004 Original 2026',
-    'fullName':family+' Regular','psName':stem+'-Regular','version':'Version 3.004',
+    fb.setupNameTable({'familyName':family,'styleName':'Regular','uniqueFontIdentifier':family+' 3.005 Original 2026',
+    'fullName':family+' Regular','psName':stem+'-Regular','version':'Version 3.005',
     'copyright':'Original vector design created for Stuart Alldred, 2026.',
-    'description':'Wild display lettering with separately styled accented character bodies. '+('Each character has a 640-unit advance; ligatures preserve their input column count.' if mono else 'Proportional widths and optical kerning.')})
+    'description':'Wild display lettering with separately styled accented character bodies and contextual letter variants. '+('Each character has a %d-unit advance; ligatures preserve their input column count.'%MONO_ADV if mono else 'Proportional widths and optical kerning.')})
     fb.setupOS2(sTypoAscender=1040,sTypoDescender=-380,sTypoLineGap=0,usWinAscent=1040,usWinDescent=380,
                 sxHeight=520,sCapHeight=710,usWeightClass=400,usWidthClass=5,fsType=0,fsSelection=0x40)
     fb.font['OS/2'].panose.bFamilyType=2;fb.font['OS/2'].panose.bProportion=9 if mono else 0
-    fb.setupPost(isFixedPitch=1 if mono else 0);fb.setupMaxp();fb.font['head'].fontRevision=3.004
+    fb.setupPost(isFixedPitch=1 if mono else 0);fb.setupMaxp();fb.font['head'].fontRevision=3.005
     from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
     feature=''
     if not mono:
@@ -1119,7 +1469,15 @@ for family,stem,mono in FAMILIES:
     for sequence in sorted(LIGATURES,key=lambda seq:-len(seq)):
         inputs=' '.join(cmap[ord(c)] for c in sequence)
         feature+=f'sub {inputs} by {ligature_name(sequence)};\n'
-    feature+='} liga;'
+    feature+='} liga;\nfeature calt {\n'
+    for step in range(max(len(specs) for specs in ALTS.values())):
+        feature+=f'lookup calt_alt{step+1} {{\n'
+        for c,specs in ALTS.items():
+            if step>=len(specs):continue
+            src=cmap[ord(c)] if step==0 else alt_name(c,step)
+            feature+=f'sub {src} {cmap[ord(c)]}\' by {alt_name(c,step+1)};\n'
+        feature+=f'}} calt_alt{step+1};\n'
+    feature+='} calt;'
     addOpenTypeFeaturesFromString(fb.font,feature)
     fontpath=out/(stem+'-Regular.ttf');fb.save(fontpath)
     web=TTFont(fontpath);web.flavor='woff2';web.save(out/(stem+'-Regular.woff2'))
@@ -1139,7 +1497,7 @@ for stem,info in BUILT.items():
     rule(112)
     text(80,166,'MixedCompany',179,True)
     text(80,378,'Gothic. Goo. Chalk. Pixels. And googly eyes.',33,bold=True)
-    text(80,440,'186 characters · 54 independently styled accented letters',26,color=MUTED)
+    text(80,440,'186 characters · 54 accented alter egos · repeating letters change clothes',26,color=MUTED)
     rule(503)
     text(80,537,'01 / THE CAPITALS',23,color=RED,bold=True)
     for row,s in enumerate(['ABCDEFGHIJKLM','NOPQRSTUVWXYZ']):
@@ -1180,6 +1538,42 @@ for row,s in enumerate(groups):
     d.line((80,yy+177,1720,yy+177),fill=LINE,width=1)
 im.save(ROOT/'outputs'/'MixedCompany-Accent-Families.png')
 
+def paint_cell(im,geom,x,y,w,h,fill=INK):
+    if geom.is_empty:return
+    x1,y1,x2,y2=geom.bounds
+    s=min((w-18)/max(x2-x1,1),(h-34)/max(y2-y1,1))
+    ox=w/2-((x1+x2)/2)*s;oy=h/2+((y1+y2)/2)*s
+    def xy(ring):return [(ox+px*s,oy-py*s) for px,py in ring.coords]
+    mask=Image.new('L',(int(w),int(h)),0);md=ImageDraw.Draw(mask)
+    polys=[geom] if geom.geom_type=='Polygon' else [g for g in geom.geoms if g.geom_type=='Polygon']
+    for poly in polys:
+        if len(poly.exterior.coords)<4:continue
+        layer=Image.new('L',(int(w),int(h)),0);ld=ImageDraw.Draw(layer)
+        ld.polygon(xy(poly.exterior),fill=255)
+        for hole in poly.interiors:
+            if len(hole.coords)>=4:ld.polygon(xy(hole),fill=0)
+        mask=ImageChops.lighter(mask,layer)
+    tint=Image.new('RGB',(int(w),int(h)),fill)
+    im.paste(tint,(int(x),int(y)),mask)
+
+rows=list('abcdefghijklmnopqrstuvwxyz')+list('ABCDEFGHIJKLMNOPQRSTUVWXYZ')+list('()[]{}.,;:!?+*/\\|=<>\'"`#')
+atlas_h=160+len(rows)*118
+variants=Image.new('RGB',(1800,atlas_h),PAPER);d=ImageDraw.Draw(variants)
+d.text((80,42),'REPEATING LETTERS CHANGE CLOTHES',font=uifont(32,True),fill=INK)
+d.text((80,88),'Default, then contextual alternates. Common letters carry extra drawings.',font=uifont(22),fill=MUTED)
+for row,c in enumerate(rows):
+    yy=140+row*118
+    d.text((80,yy+38),c,font=uifont(28,True),fill=RED)
+    bodies=[BODIES[c],*ALT_BODIES[c]];labels=['default',*ALT_LABELS[c]]
+    for col,(geom,label) in enumerate(zip(bodies,labels)):
+        x=150+col*400
+        d.rectangle((x,yy,x+380,yy+108),outline=LINE)
+        paint_cell(variants,geom,x,yy,380,78)
+        size=14
+        while d.textlength(label,font=uifont(size))>360 and size>10:size-=1
+        d.text((x+10,yy+82),label,font=uifont(size),fill=MUTED)
+variants.save(ROOT/'outputs'/'MixedCompany-Letter-Variants.png')
+
 chars=[chr(cp) for cp in sorted(info['cmap']) if cp not in (32,160)]
 cols=10;cw=169;ch=189
 atlas=Image.new('RGB',(cols*cw+100,math.ceil(len(chars)/cols)*ch+180),PAPER);d=ImageDraw.Draw(atlas)
@@ -1200,7 +1594,7 @@ d.text((80,45),'SAME CHARACTERS / TWO SPACING SYSTEMS',font=uifont(30,True),fill
 for j,(stem,info) in enumerate(BUILT.items()):
     y=135+j*575
     d.text((80,y),info['family'].upper(),font=uifont(25,True),fill=RED)
-    for k,s in enumerate(['A little weird?','Voilà! Déjà vu.','iiii  WWWW  1234']):
+    for k,s in enumerate(['A little weird?','less see look','foo(bar(x))  )))']):
         d.text((80,y+72+k*150),s,font=df(stem,124),fill=INK,anchor='lt')
     d.line((80,y+535,1720,y+535),fill=LINE,width=2)
 compare.save(ROOT/'outputs'/'MixedCompany-Spacing-Comparison.png')
@@ -1208,13 +1602,14 @@ compare.save(ROOT/'outputs'/'MixedCompany-Spacing-Comparison.png')
 encoded={stem:base64.b64encode((info['out']/(stem+'-Regular.woff2')).read_bytes()).decode() for stem,info in BUILT.items()}
 cards=''.join('<div class="glyph"><span>'+html.escape(c)+'</span><small>'+html.escape(LABELS[c])+'</small></div>' for c in chars)
 page='''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MixedCompany / try both fonts</title><style>
-@font-face{font-family:MixedCompany;src:url(data:font/woff2;base64,PROPFONT) format('woff2')}@font-face{font-family:MixedCompanyMono;src:url(data:font/woff2;base64,MONOFONT) format('woff2')}*{box-sizing:border-box}body{margin:0;background:#f5f0e4;color:#252621;font:16px system-ui,sans-serif}main{max-width:1240px;padding:34px 28px;margin:auto}header{display:flex;justify-content:space-between;gap:24px;border-bottom:1px solid #c9c1b2;padding-bottom:24px;font-size:13px;letter-spacing:.07em}h1{font:clamp(43px,6.2vw,84px)/1.5 MixedCompany;margin:35px 0 14px}p{line-height:1.6;max-width:820px}nav{display:flex;flex-wrap:wrap;gap:22px;align-items:center;border-top:1px solid #c9c1b2;padding:23px 0;margin-top:30px}label{display:inline-flex;gap:10px;align-items:center;font-size:14px}select{padding:9px 12px;border:1px solid #b8b2a6;background:transparent;border-radius:4px;font:inherit}input{accent-color:#d33b31}textarea{font:74px/1.52 MixedCompany;width:100%;height:410px;background:transparent;color:inherit;border:1px solid #c9c1b2;resize:vertical;padding:20px;outline-color:#d33b31;font-synthesis:none}.mono{font-family:MixedCompanyMono;font-kerning:none;font-variant-ligatures:common-ligatures}.tip{font-size:13px;color:#77766b}.status{min-height:24px;color:#b23c2f;font-size:14px}h2{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:#d33b31;margin:43px 0 22px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));border-left:1px solid #c9c1b2;border-top:1px solid #c9c1b2}.glyph{min-height:153px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid #c9c1b2;border-bottom:1px solid #c9c1b2;text-align:center;padding:5px}.glyph span{font:74px/1.5 MixedCompany}.grid.mono .glyph span{font-family:MixedCompanyMono}.glyph small{font-size:10px;color:#747466;line-height:1.4}footer{border-top:1px solid #c9c1b2;padding-top:20px;margin-top:40px;font-size:13px;color:#747466}</style>
-<main><header><strong>MIXEDCOMPANY</strong><span>For Will ❤️</span></header><h1>MixedCompany</h1><p>A display typeface. Every letter is its own drawing, including the accented ones.</p><nav><label>Font <select id="face"><option value="MixedCompany">Proportional</option><option value="MixedCompanyMono">Monospaced</option></select></label><label>Size <input id="size" type="range" min="28" max="150" value="74"><output id="sizeout">74 px</output></label><label>Ink <input id="ink" type="color" value="#252621"></label></nav><textarea id="tester" aria-label="Try the MixedCompany fonts" spellcheck="false">A little weird? Voilà!
+@font-face{font-family:MixedCompany;src:url(data:font/woff2;base64,PROPFONT) format('woff2')}@font-face{font-family:MixedCompanyMono;src:url(data:font/woff2;base64,MONOFONT) format('woff2')}*{box-sizing:border-box}body{margin:0;background:#f5f0e4;color:#252621;font:16px system-ui,sans-serif}main{max-width:1240px;padding:34px 28px;margin:auto}header{display:flex;justify-content:space-between;gap:24px;border-bottom:1px solid #c9c1b2;padding-bottom:24px;font-size:13px;letter-spacing:.07em}h1{font:clamp(43px,6.2vw,84px)/1.5 MixedCompany;margin:35px 0 14px}p{line-height:1.6;max-width:820px}nav{display:flex;flex-wrap:wrap;gap:22px;align-items:center;border-top:1px solid #c9c1b2;padding:23px 0;margin-top:30px}label{display:inline-flex;gap:10px;align-items:center;font-size:14px}select{padding:9px 12px;border:1px solid #b8b2a6;background:transparent;border-radius:4px;font:inherit}input{accent-color:#d33b31}textarea{font:74px/1.52 MixedCompany;width:100%;height:410px;background:transparent;color:inherit;border:1px solid #c9c1b2;resize:vertical;padding:20px;outline-color:#d33b31;font-synthesis:none;font-feature-settings:"liga" 1,"calt" 1}.mono{font-family:MixedCompanyMono;font-kerning:none;font-variant-ligatures:common-ligatures contextual;font-feature-settings:"liga" 1,"calt" 1}.tip{font-size:13px;color:#77766b}.status{min-height:24px;color:#b23c2f;font-size:14px}h2{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:#d33b31;margin:43px 0 22px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));border-left:1px solid #c9c1b2;border-top:1px solid #c9c1b2}.glyph{min-height:153px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid #c9c1b2;border-bottom:1px solid #c9c1b2;text-align:center;padding:5px}.glyph span{font:74px/1.5 MixedCompany}.grid.mono .glyph span{font-family:MixedCompanyMono}.glyph small{font-size:10px;color:#747466;line-height:1.4}footer{border-top:1px solid #c9c1b2;padding-top:20px;margin-top:40px;font-size:13px;color:#747466}</style>
+<main><header><strong>MIXEDCOMPANY</strong><span>For Will ❤️</span></header><h1>MixedCompany</h1><p>A display typeface. Every letter is its own drawing, including the accented ones. Repeated letters cycle through extra designs.</p><nav><label>Font <select id="face"><option value="MixedCompany">Proportional</option><option value="MixedCompanyMono">Monospaced</option></select></label><label>Size <input id="size" type="range" min="28" max="150" value="74"><output id="sizeout">74 px</output></label><label>Ink <input id="ink" type="color" value="#252621"></label></nav><textarea id="tester" aria-label="Try the MixedCompany fonts" spellcheck="false">A little weird? less see look
+foo(bar(x)) arr[i] {{{
+))) ... !!
 A À Á Â Ã Ä Å
-u ù ú û ü  2
 &lt;= >= != == === !==
 &lt;- -> &lt;-> => &lt;=>
-&lt;-- --> &lt;== ==> ~=</textarea><p class="tip">With standard ligatures on, typed operators join.</p><p id="status" class="status" aria-live="polite"></p><h2>186 characters</h2><section class="grid" id="grid">CARDS</section><footer>Display sizes. No combining marks.</footer></main><script>
+&lt;-- --> &lt;== ==> ~=</textarea><p class="tip">Repeated letters swap clothes. Typed operators join when ligatures are on.</p><p id="status" class="status" aria-live="polite"></p><h2>186 characters</h2><section class="grid" id="grid">CARDS</section><footer>Display sizes. No combining marks.</footer></main><script>
 const tester=document.querySelector('#tester'),face=document.querySelector('#face'),size=document.querySelector('#size'),ink=document.querySelector('#ink'),grid=document.querySelector('#grid');
 face.onchange=()=>{tester.style.fontFamily=face.value;tester.classList.toggle('mono',face.value==='MixedCompanyMono');grid.classList.toggle('mono',face.value==='MixedCompanyMono')};size.oninput=()=>{tester.style.fontSize=size.value+'px';document.querySelector('#sizeout').value=size.value+' px'};ink.oninput=()=>tester.style.color=ink.value;
 const supported=new Set(CODEPOINTS);tester.oninput=()=>{const missing=[...new Set([...tester.value].filter(c=>!supported.has(c.codePointAt(0))&&!/\\s/.test(c)))];document.querySelector('#status').textContent=missing.length?'Outside this character set: '+missing.join(' '):''};tester.oninput();
@@ -1263,11 +1658,21 @@ for i,a in enumerate(LIGATURES):
         ligature_audit.append({'pair':[a,b],'overlap_including_mirror':resemblance(LIGATURE_BODIES[a],LIGATURE_BODIES[b])})
 # Catch future regressions to copied, mirrored or merely stretched ligatures.
 assert max(x['overlap_including_mirror'] for x in ligature_audit)<.9
+alt_audit=[]
+for c,bodies in ALT_BODIES.items():
+    for i,g in enumerate(bodies,1):
+        alt_audit.append({'letter':c,'pair':f'{c}.alt{i}','overlap_including_mirror':resemblance(BODIES[c],g)})
+        for j,h in enumerate(bodies[i:],i+1):
+            alt_audit.append({'letter':c,'pair':f'{c}.alt{i}/alt{j}','overlap_including_mirror':resemblance(g,h)})
+assert max(x['overlap_including_mirror'] for x in alt_audit)<.97,(max(alt_audit,key=lambda x:x['overlap_including_mirror']))
 audit={'groups':PAIR_GROUPS,'characters':sorted(pair_audit,key=lambda x:-x['overlap_including_mirror']),
        'ligatures':sorted(ligature_audit,key=lambda x:-x['overlap_including_mirror']),
+       'alternates':sorted(alt_audit,key=lambda x:-x['overlap_including_mirror']),
        'note':'Normalized outline overlap is a copy-detection aid; design contrast is reviewed visually at 40 and 76 pixels.'}
 (ROOT/'work'/'contrast-audit.json').write_text(json.dumps(audit,indent=2,ensure_ascii=False))
 
-report={'version':'3.004','families':[f[0] for f in FAMILIES],'encoded_characters':len(info['cmap']),'independent_accent_bodies':len(ACCENT),'styles':LABELS,'ligatures':LIGATURES,'ligature_styles':LIGATURE_LABELS,'accent_body_comparisons':body_differences}
+report={'version':'3.005','families':[f[0] for f in FAMILIES],'encoded_characters':len(info['cmap']),'independent_accent_bodies':len(ACCENT),
+        'alternate_drawings':sum(len(v) for v in ALTS.values()),'alternates':{c:ALT_LABELS[c] for c in sorted(ALTS,key=lambda ch:(ch.isupper(),ch))},
+        'styles':LABELS,'ligatures':LIGATURES,'ligature_styles':LIGATURE_LABELS,'accent_body_comparisons':body_differences}
 (ROOT/'work'/'font-report.json').write_text(json.dumps(report,indent=2,ensure_ascii=False))
-print(json.dumps({'families':report['families'],'characters':report['encoded_characters'],'independent_accent_bodies':len(ACCENT),'maximum_accent_parent_body_overlap':max(d['body_overlap'] for d in body_differences.values())},indent=2))
+print(json.dumps({'families':report['families'],'characters':report['encoded_characters'],'independent_accent_bodies':len(ACCENT),'alternate_drawings':report['alternate_drawings'],'maximum_accent_parent_body_overlap':max(d['body_overlap'] for d in body_differences.values())},indent=2))
