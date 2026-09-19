@@ -37,9 +37,9 @@ for stem,mono in [('MixedCompany',False),('MixedCompanyMono',True)]:
     assert ttf['GSUB'].compile(ttf)==woff['GSUB'].compile(woff)
     hb=shutil.which('hb-shape')
     assert hb, 'Install HarfBuzz CLI tools to check real ligature shaping.'
-    def shape(text,enabled=True,calt=True):
-        return json.loads(subprocess.check_output([hb,str(path),'--text='+text,'--output-format=json',
-            '--features=liga='+('1' if enabled else '0')+',calt='+('1' if calt else '0')],text=True))
+    def shape(text,enabled=True,calt=True,ss01=False,ss02=False):
+        feats='liga='+('1' if enabled else '0')+',calt='+('1' if calt else '0')+',ss01='+('1' if ss01 else '0')+',ss02='+('1' if ss02 else '0')
+        return json.loads(subprocess.check_output([hb,str(path),'--text='+text,'--output-format=json','--features='+feats],text=True))
     shaped={}
     for sequence in design['ligatures']:
         expected='lig_'+'_'.join(f'{ord(c):04X}' for c in sequence)
@@ -71,6 +71,17 @@ for stem,mono in [('MixedCompany',False),('MixedCompanyMono',True)]:
             triple=shape(c+c+c,enabled=False)
             assert [g['g'] for g in triple]==[name,alts[0],alts[1]],(c,triple)
         alt_shaped[c]=alts
+    o=cmap[ord('o')]
+    assert [g['g'] for g in shape('o',False,False,ss01=True)]==[o+'.alt1']
+    assert [g['g'] for g in shape('o',False,False,ss02=True)]==[o+'.alt2']
+    assert [g['g'] for g in shape('o',False,False,ss01=True,ss02=True)]==[o+'.bi']
+    o_alts=[f'{o}.alt{i}' for i in range(1,len(design['alternates']['o'])+1)]
+    assert [g['g'] for g in shape('oo',False,True,ss01=True)]==[o_alts[0],o_alts[1]]
+    assert [g['g'] for g in shape('ooo',False,True,ss01=True)]==[o_alts[0],o_alts[1],o_alts[2]]
+    assert [g['g'] for g in shape('oo',False,True,ss02=True)]==[o_alts[1],o_alts[2]]
+    assert [g['g'] for g in shape('oo',False,True,ss01=True,ss02=True)]==[o+'.bi',o_alts[2]]
+    assert [g['g'] for g in shape('look',False,True,ss01=True)][1:3]==[o_alts[0],o_alts[1]]
+    assert {rec.FeatureTag for rec in ttf['GSUB'].table.FeatureList.FeatureRecord}>= {'ss01','ss02'}
     fonts={s:ImageFont.truetype(str(path),s) for s in [48,128]}
     bounds=[]
     for cp,name in cmap.items():

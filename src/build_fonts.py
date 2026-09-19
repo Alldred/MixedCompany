@@ -615,6 +615,32 @@ def themed(paths,mode,w,c,salt=0):
         return g
     if mode=='brush_ink':
         return union([variable_stroke(q,w) for q in p])
+    if mode=='poster':
+        parts=[]
+        for q in p:
+            if len(q)==1:
+                x,y=q[0];parts.append(Point(x,y).buffer(w*.72,quad_segs=16))
+            else:parts.append(stroke(q,w,'flat'))
+        g=union(parts);extras=[]
+        for q in p:
+            if len(q)<2 or q[0]==q[-1]:continue
+            for idx,near in [(0,1),(-1,-2)]:
+                x,y=q[idx];nx,ny=q[near]
+                if abs(ny-y)>abs(nx-x)*1.2:extras.append(box(x-w*1.12,y-w*.2,x+w*1.12,y+w*.2))
+                elif abs(nx-x)>abs(ny-y)*1.2:extras.append(box(x-w*.2,y-w*.9,x+w*.2,y+w*.9))
+        return make_valid(union([g,*extras]).buffer(3).buffer(-3))
+    if mode=='cursive':
+        parts=[]
+        for q in p:
+            if len(q)==1:
+                x,y=q[0]
+                parts.append(union([Point(x,y).buffer(w*.5,quad_segs=14),stroke([(x,y),(x+w*.4,y-w*1.15)],max(16,w*.42),'round')]))
+            else:parts.append(stroke(q,w,'round',True))
+        extras=[]
+        for q in p:
+            if len(q)<2 or q[0]==q[-1]:continue
+            x,y=q[0];extras.append(stroke([(x-w*1.1,y+w*.55),(x,y)],max(18,w*.6),'round'))
+        return scale(union(parts+extras),xfact=.86,origin=(0,0))
     g=union([stroke(q,w,'round' if mode not in ['pixels','bricks','lego','barcode','knit','paper','stone'] else 'flat') for q in p])
     x1,y1,x2,y2=g.bounds
     if mode=='pixels':return grid(g,47)
@@ -1120,21 +1146,26 @@ MARKS={'\u0301':[path('M-65 0 L75 120')],'\u0300':[path('M-75 120 L65 0')],
 
 def mark_geometry(c,mode):
     base,mark=unicodedata.normalize('NFD',c);p=MARKS[mark]
-    weight=38 if mode in ['wire_cage','filigree','chain','hairpin','scribble','spring'] else 47
-    markg=union([stroke(q,weight,'round') for q in p])
-    if mode in ['pixel_mosaic','dotmatrix','lego','barcode']:markg=grid(markg,17,1 if mode=='pixel_mosaic' else 0)
-    elif mark=='\u0308' and mode in ['ladder','wire_cage','orbital','flower','snowflake']:
-        markg=union([diamonds(q,38) if mode in ['ladder','snowflake'] else Point(q[0]).buffer(38,quad_segs=12).difference(Point(q[0]).buffer(19,quad_segs=12)) for q in p])
-    elif mode in ['paper','stone','stitch']:markg=roughen(markg,rr(c),4,17)
+    if mode=='poster':markg=union([stroke(q,72,'flat') for q in p])
+    elif mode=='cursive':
+        markg=union([stroke(q,34,'round') for q in p])
+        markg=skew(markg,xs=math.degrees(math.atan(.18)),origin=(0,0))
+    else:
+        weight=38 if mode in ['wire_cage','filigree','chain','hairpin','scribble','spring'] else 47
+        markg=union([stroke(q,weight,'round') for q in p])
+        if mode in ['pixel_mosaic','dotmatrix','lego','barcode']:markg=grid(markg,17,1 if mode=='pixel_mosaic' else 0)
+        elif mark=='\u0308' and mode in ['ladder','wire_cage','orbital','flower','snowflake']:
+            markg=union([diamonds(q,38) if mode in ['ladder','snowflake'] else Point(q[0]).buffer(38,quad_segs=12).difference(Point(q[0]).buffer(19,quad_segs=12)) for q in p])
+        elif mode in ['paper','stone','stitch']:markg=roughen(markg,rr(c),4,17)
     return markg
 
-def fit_glyph(c,body,mono=True):
+def fit_glyph(c,body,mono=True,mark_mode=None):
     g=body
     limit=MONO_LIMIT if mono else 720
     width=g.bounds[2]-g.bounds[0]
     if width>limit:g=scale(g,xfact=limit/width,yfact=1,origin=(0,0))
     if c in ACCENT:
-        base,mark=unicodedata.normalize('NFD',c);mode=ACCENT[c][0]
+        base,mark=unicodedata.normalize('NFD',c);mode=mark_mode or ACCENT[c][0]
         m=mark_geometry(c,mode);x1,y1,x2,y2=g.bounds
         center=(x1+x2)/2;yy=-10 if mark=='\u0327' else y2+82
         g=union([g,translate(m,xoff=center,yoff=yy)])
@@ -1381,6 +1412,36 @@ EXTRA_SYMBOLS={c:(themed([path(p) for p in EXTRA_PATHS[c]],mode,w,c),label)
                for c,(mode,w,label) in EXTRA_THEMES.items()}
 for c,(body,label) in EXTRA_SYMBOLS.items():
     BODIES[c]=body;LABELS[c]=label
+
+def style_paths(c):
+    if c in ACCENT:
+        base=unicodedata.normalize('NFD',c)[0]
+        return copy.deepcopy(CLEAN_PATHS[base]),base
+    if c in EXTRA_PATHS:return [path(p) for p in EXTRA_PATHS[c]],c
+    return copy.deepcopy(CLEAN_PATHS[c]),c
+
+def make_style_cut(c,mode,w,slant):
+    paths,base=style_paths(c)
+    geom=themed(paths,mode,w,c)
+    geom=finish_body(geom,base,w,slant,mode,c)
+    assert not geom.is_empty,(c,mode)
+    return geom
+
+# Bold and italic are real drawings, inserted first so repeats go default → bold → italic → wilder cuts.
+BI_BODIES={}
+for c in list(BODIES):
+    base=unicodedata.normalize('NFD',c)[0]
+    alnum=base.isascii() and base.isalnum()
+    bold_w,ital_w,bi_w=(126,52,108) if alnum else (90,38,78)
+    bold=make_style_cut(c,'poster',bold_w,0)
+    ital=make_style_cut(c,'cursive',ital_w,.18)
+    ALT_BODIES.setdefault(c,[]);ALT_LABELS.setdefault(c,[]);ALT_MODES.setdefault(c,[]);ALTS.setdefault(c,[])
+    ALT_BODIES[c]=[bold,ital]+ALT_BODIES[c]
+    ALT_LABELS[c]=['Poster black','Cursive italic']+ALT_LABELS[c]
+    ALT_MODES[c]=['poster','cursive']+ALT_MODES[c]
+    ALTS[c]=[('poster',bold_w,0,'Poster black'),('cursive',ital_w,.18,'Cursive italic')]+ALTS[c]
+    BI_BODIES[c]=make_style_cut(c,'poster',bi_w,.16)
+
 LIGATURES={
     '<=':'≤','>=':'≥','!=':'≠','==':'=','===':'≡','!==':'≢',
     '<-':'←','->':'→','<->':'↔','=>':'⇒','<=>':'⇔',
@@ -1437,8 +1498,12 @@ for family,stem,mono in FAMILIES:
         shapes[c]=g;glyphs[name]=as_glyph(g);metrics[name]=(adv,round(g.bounds[0]));cmap[ord(c)]=name
     for c,bodies in ALT_BODIES.items():
         for i,body in enumerate(bodies,1):
-            g,adv=fit_glyph(c,body,mono);name=alt_name(c,i)
+            mark_mode=ALT_MODES[c][i-1] if ALT_MODES[c][i-1] in ('poster','cursive') else None
+            g,adv=fit_glyph(c,body,mono,mark_mode);name=alt_name(c,i)
             glyphs[name]=as_glyph(g);metrics[name]=(adv,round(g.bounds[0]))
+    for c,body in BI_BODIES.items():
+        g,adv=fit_glyph(c,body,mono,'poster');name=f'uni{ord(c):04X}.bi'
+        glyphs[name]=as_glyph(g);metrics[name]=(adv,round(g.bounds[0]))
     for sequence,symbol in LIGATURES.items():
         g=LIGATURE_BODIES[sequence]
         advance=sum(metrics[cmap[ord(c)]][0] for c in sequence)
@@ -1469,13 +1534,26 @@ for family,stem,mono in FAMILIES:
     for sequence in sorted(LIGATURES,key=lambda seq:-len(seq)):
         inputs=' '.join(cmap[ord(c)] for c in sequence)
         feature+=f'sub {inputs} by {ligature_name(sequence)};\n'
-    feature+='} liga;\nfeature calt {\n'
-    for step in range(max(len(specs) for specs in ALTS.values())):
+    feature+='} liga;\nfeature ss01 {\n'
+    for c in BODIES:
+        feature+=f'sub {cmap[ord(c)]} by {alt_name(c,1)};\n'
+    feature+='} ss01;\nfeature ss02 {\n'
+    for c in BODIES:
+        feature+=f'sub {cmap[ord(c)]} by {alt_name(c,2)};\n'
+        feature+=f'sub {alt_name(c,1)} by uni{ord(c):04X}.bi;\n'
+    feature+='} ss02;\nfeature calt {\n'
+    chains=[]
+    for c,specs in ALTS.items():
+        forms=[cmap[ord(c)]]+[alt_name(c,i) for i in range(1,len(specs)+1)]
+        d,a1,a2=forms[0],forms[1],forms[2]
+        bi=f'uni{ord(c):04X}.bi'
+        chains += [(d,forms[1:]),(a1,forms[2:]+[d]),(a2,forms[3:]+[d,a1]),(bi,forms[3:]+[d])]
+    for step in range(max(len(rest) for _,rest in chains)):
         feature+=f'lookup calt_alt{step+1} {{\n'
-        for c,specs in ALTS.items():
-            if step>=len(specs):continue
-            src=cmap[ord(c)] if step==0 else alt_name(c,step)
-            feature+=f'sub {src} {cmap[ord(c)]}\' by {alt_name(c,step+1)};\n'
+        for typed,rest in chains:
+            if step>=len(rest):continue
+            prev=typed if step==0 else rest[step-1]
+            feature+=f'sub {prev} {typed}\' by {rest[step]};\n'
         feature+=f'}} calt_alt{step+1};\n'
     feature+='} calt;'
     addOpenTypeFeaturesFromString(fb.font,feature)
@@ -1560,17 +1638,18 @@ rows=list('abcdefghijklmnopqrstuvwxyz')+list('ABCDEFGHIJKLMNOPQRSTUVWXYZ')+list(
 atlas_h=160+len(rows)*118
 variants=Image.new('RGB',(1800,atlas_h),PAPER);d=ImageDraw.Draw(variants)
 d.text((80,42),'REPEATING LETTERS CHANGE CLOTHES',font=uifont(32,True),fill=INK)
-d.text((80,88),'Default, then contextual alternates. Common letters carry extra drawings.',font=uifont(22),fill=MUTED)
+d.text((80,88),'Default, then the bold cut, then italic, then wilder repeats.',font=uifont(22),fill=MUTED)
 for row,c in enumerate(rows):
     yy=140+row*118
     d.text((80,yy+38),c,font=uifont(28,True),fill=RED)
     bodies=[BODIES[c],*ALT_BODIES[c]];labels=['default',*ALT_LABELS[c]]
+    cols=max(1,len(bodies));cell=min(400,int((1630)/cols)-8)
     for col,(geom,label) in enumerate(zip(bodies,labels)):
-        x=150+col*400
-        d.rectangle((x,yy,x+380,yy+108),outline=LINE)
-        paint_cell(variants,geom,x,yy,380,78)
+        x=150+col*(cell+8)
+        d.rectangle((x,yy,x+cell,yy+108),outline=LINE)
+        paint_cell(variants,geom,x,yy,cell,78)
         size=14
-        while d.textlength(label,font=uifont(size))>360 and size>10:size-=1
+        while d.textlength(label,font=uifont(size))>cell-20 and size>10:size-=1
         d.text((x+10,yy+82),label,font=uifont(size),fill=MUTED)
 variants.save(ROOT/'outputs'/'MixedCompany-Letter-Variants.png')
 
@@ -1602,16 +1681,17 @@ compare.save(ROOT/'outputs'/'MixedCompany-Spacing-Comparison.png')
 encoded={stem:base64.b64encode((info['out']/(stem+'-Regular.woff2')).read_bytes()).decode() for stem,info in BUILT.items()}
 cards=''.join('<div class="glyph"><span>'+html.escape(c)+'</span><small>'+html.escape(LABELS[c])+'</small></div>' for c in chars)
 page='''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MixedCompany / try both fonts</title><style>
-@font-face{font-family:MixedCompany;src:url(data:font/woff2;base64,PROPFONT) format('woff2')}@font-face{font-family:MixedCompanyMono;src:url(data:font/woff2;base64,MONOFONT) format('woff2')}*{box-sizing:border-box}body{margin:0;background:#f5f0e4;color:#252621;font:16px system-ui,sans-serif}main{max-width:1240px;padding:34px 28px;margin:auto}header{display:flex;justify-content:space-between;gap:24px;border-bottom:1px solid #c9c1b2;padding-bottom:24px;font-size:13px;letter-spacing:.07em}h1{font:clamp(43px,6.2vw,84px)/1.5 MixedCompany;margin:35px 0 14px}p{line-height:1.6;max-width:820px}nav{display:flex;flex-wrap:wrap;gap:22px;align-items:center;border-top:1px solid #c9c1b2;padding:23px 0;margin-top:30px}label{display:inline-flex;gap:10px;align-items:center;font-size:14px}select{padding:9px 12px;border:1px solid #b8b2a6;background:transparent;border-radius:4px;font:inherit}input{accent-color:#d33b31}textarea{font:74px/1.52 MixedCompany;width:100%;height:410px;background:transparent;color:inherit;border:1px solid #c9c1b2;resize:vertical;padding:20px;outline-color:#d33b31;font-synthesis:none;font-feature-settings:"liga" 1,"calt" 1}.mono{font-family:MixedCompanyMono;font-kerning:none;font-variant-ligatures:common-ligatures contextual;font-feature-settings:"liga" 1,"calt" 1}.tip{font-size:13px;color:#77766b}.status{min-height:24px;color:#b23c2f;font-size:14px}h2{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:#d33b31;margin:43px 0 22px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));border-left:1px solid #c9c1b2;border-top:1px solid #c9c1b2}.glyph{min-height:153px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid #c9c1b2;border-bottom:1px solid #c9c1b2;text-align:center;padding:5px}.glyph span{font:74px/1.5 MixedCompany}.grid.mono .glyph span{font-family:MixedCompanyMono}.glyph small{font-size:10px;color:#747466;line-height:1.4}footer{border-top:1px solid #c9c1b2;padding-top:20px;margin-top:40px;font-size:13px;color:#747466}</style>
-<main><header><strong>MIXEDCOMPANY</strong><span>For Will ❤️</span></header><h1>MixedCompany</h1><p>A display typeface. Every letter is its own drawing, including the accented ones. Repeated letters cycle through extra designs.</p><nav><label>Font <select id="face"><option value="MixedCompany">Proportional</option><option value="MixedCompanyMono">Monospaced</option></select></label><label>Size <input id="size" type="range" min="28" max="150" value="74"><output id="sizeout">74 px</output></label><label>Ink <input id="ink" type="color" value="#252621"></label></nav><textarea id="tester" aria-label="Try the MixedCompany fonts" spellcheck="false">A little weird? less see look
+@font-face{font-family:MixedCompany;src:url(data:font/woff2;base64,PROPFONT) format('woff2');font-weight:400;font-style:normal}@font-face{font-family:MixedCompanyMono;src:url(data:font/woff2;base64,MONOFONT) format('woff2');font-weight:400;font-style:normal}*{box-sizing:border-box}body{margin:0;background:#f5f0e4;color:#252621;font:16px system-ui,sans-serif}main{max-width:1240px;padding:34px 28px;margin:auto}header{display:flex;justify-content:space-between;gap:24px;border-bottom:1px solid #c9c1b2;padding-bottom:24px;font-size:13px;letter-spacing:.07em}h1{font:clamp(43px,6.2vw,84px)/1.5 MixedCompany;margin:35px 0 14px}p{line-height:1.6;max-width:820px}nav{display:flex;flex-wrap:wrap;gap:22px;align-items:center;border-top:1px solid #c9c1b2;padding:23px 0;margin-top:30px}label{display:inline-flex;gap:10px;align-items:center;font-size:14px}select{padding:9px 12px;border:1px solid #b8b2a6;background:transparent;border-radius:4px;font:inherit}input{accent-color:#d33b31}.tester-frame{border:1px solid #c9c1b2;overflow:hidden}textarea{font:74px/1.52 MixedCompany;width:100%;height:410px;background:transparent;color:inherit;border:0;resize:vertical;padding:20px;outline-color:#d33b31;font-synthesis:none;font-feature-settings:"liga" 1,"calt" 1}.mono{font-family:MixedCompanyMono;font-kerning:none;font-variant-ligatures:common-ligatures contextual;font-feature-settings:"liga" 1,"calt" 1}.tip{font-size:13px;color:#77766b}.status{min-height:24px;color:#b23c2f;font-size:14px}h2{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:#d33b31;margin:43px 0 22px}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));border-left:1px solid #c9c1b2;border-top:1px solid #c9c1b2}.glyph{min-height:153px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid #c9c1b2;border-bottom:1px solid #c9c1b2;text-align:center;padding:5px}.glyph span{font:74px/1.5 MixedCompany;font-synthesis:none;font-feature-settings:"liga" 1,"calt" 1}.grid.mono .glyph span{font-family:MixedCompanyMono}.bold,.bold .glyph span{font-feature-settings:"liga" 1,"calt" 1,"ss01" 1}.italic,.italic .glyph span{font-feature-settings:"liga" 1,"calt" 1,"ss02" 1}.bold.italic,.bold.italic .glyph span{font-feature-settings:"liga" 1,"calt" 1,"ss01" 1,"ss02" 1}.glyph small{font-size:10px;color:#747466;line-height:1.4}footer{border-top:1px solid #c9c1b2;padding-top:20px;margin-top:40px;font-size:13px;color:#747466}</style>
+<main><header><strong>MIXEDCOMPANY</strong><span>For Will ❤️</span></header><h1>MixedCompany</h1><p>A display typeface. Every letter is its own drawing, including the accented ones. Repeated letters cycle through extra designs.</p><nav><label>Font <select id="face"><option value="MixedCompany">Proportional</option><option value="MixedCompanyMono">Monospaced</option></select></label><label>Size <input id="size" type="range" min="28" max="150" value="74"><output id="sizeout">74 px</output></label><label>Ink <input id="ink" type="color" value="#252621"></label><label>Bold <input id="bold" type="checkbox"></label><label>Italic <input id="italic" type="checkbox"></label></nav><div class="tester-frame"><textarea id="tester" aria-label="Try the MixedCompany fonts" spellcheck="false">A little weird? less see look
 foo(bar(x)) arr[i] {{{
 ))) ... !!
 A À Á Â Ã Ä Å
 &lt;= >= != == === !==
 &lt;- -> &lt;-> => &lt;=>
-&lt;-- --> &lt;== ==> ~=</textarea><p class="tip">Repeated letters swap clothes. Typed operators join when ligatures are on.</p><p id="status" class="status" aria-live="polite"></p><h2>186 characters</h2><section class="grid" id="grid">CARDS</section><footer>Display sizes. No combining marks.</footer></main><script>
-const tester=document.querySelector('#tester'),face=document.querySelector('#face'),size=document.querySelector('#size'),ink=document.querySelector('#ink'),grid=document.querySelector('#grid');
-face.onchange=()=>{tester.style.fontFamily=face.value;tester.classList.toggle('mono',face.value==='MixedCompanyMono');grid.classList.toggle('mono',face.value==='MixedCompanyMono')};size.oninput=()=>{tester.style.fontSize=size.value+'px';document.querySelector('#sizeout').value=size.value+' px'};ink.oninput=()=>tester.style.color=ink.value;
+&lt;-- --> &lt;== ==> ~=</textarea></div><p class="tip">Repeated letters swap clothes: bold, then italic, then wilder cuts. Bold and italic toggles pick the starting drawing; repeats still change. Typed operators join when ligatures are on.</p><p id="status" class="status" aria-live="polite"></p><h2>186 characters</h2><section class="grid" id="grid">CARDS</section><footer>Display sizes. No combining marks.</footer></main><script>
+const tester=document.querySelector('#tester'),face=document.querySelector('#face'),size=document.querySelector('#size'),ink=document.querySelector('#ink'),grid=document.querySelector('#grid'),bold=document.querySelector('#bold'),italic=document.querySelector('#italic');
+const restyle=()=>{for(const el of [tester,grid]){el.classList.toggle('bold',bold.checked);el.classList.toggle('italic',italic.checked)}};
+face.onchange=()=>{tester.style.fontFamily=face.value;tester.classList.toggle('mono',face.value==='MixedCompanyMono');grid.classList.toggle('mono',face.value==='MixedCompanyMono')};size.oninput=()=>{tester.style.fontSize=size.value+'px';document.querySelector('#sizeout').value=size.value+' px'};ink.oninput=()=>tester.style.color=ink.value;bold.onchange=italic.onchange=restyle;
 const supported=new Set(CODEPOINTS);tester.oninput=()=>{const missing=[...new Set([...tester.value].filter(c=>!supported.has(c.codePointAt(0))&&!/\\s/.test(c)))];document.querySelector('#status').textContent=missing.length?'Outside this character set: '+missing.join(' '):''};tester.oninput();
 </script></html>'''.replace('PROPFONT',encoded['MixedCompany']).replace('MONOFONT',encoded['MixedCompanyMono']).replace('CARDS',cards).replace('CODEPOINTS',json.dumps(sorted(info['cmap'])))
 (ROOT/'outputs'/'MixedCompany-Try-It.html').write_text(page)

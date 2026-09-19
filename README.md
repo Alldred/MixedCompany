@@ -23,7 +23,9 @@ Two fonts: **MixedCompany** (proportional) and **MixedCompany Mono** (fixed widt
 
 ## Repeating letters
 
-Contextual alternates are on by default. `see`, `little`, `look`, `less` and `foo(bar(x))` each pick a different drawing for the repeated mark. Every A–Z/a–z has at least two versions; common letters and stacking code punctuation such as `)` `(` `]` `{` `.` have three.
+Contextual alternates are on by default. `see`, `little`, `look`, `less` and `foo(bar(x))` each pick a different drawing for the repeated mark. The first extra drawing is the bold cut, then italic, then wilder clothes. Every encoded character has bold and italic drawings; A–Z/a–z keep their extra costumes as well.
+
+The try-it page Bold / Italic toggles turn on stylistic sets `ss01` / `ss02`. They are separate drawings, not a fake stroke or shear. Repeating letters still change clothes: the toggle picks the starting cut, then later repeats walk the remaining designs.
 
 ## Ligatures
 
